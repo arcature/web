@@ -3,11 +3,10 @@
  * Renders a CMS image cropped into a fixed vector shape from the design, so
  * editors can swap the photo without breaking the art direction.
  */
-import { getImage } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
+import { imageUrl, type CmsImage } from '../lib/images';
 
 interface Props {
-  image: ImageMetadata | undefined;
+  image: CmsImage | undefined;
   alt: string;
   /** Shape outline in the viewBox coordinate space. */
   path: string;
@@ -25,7 +24,7 @@ interface Props {
 const { image, alt, path, width, height, tint, filter, renderWidth = width, class: className } = Astro.props;
 
 const clipId = `clip-${Math.random().toString(36).slice(2, 9)}`;
-const optimized = image ? await getImage({ src: image, width: Math.min(image.width, renderWidth * 2) }) : undefined;
+const href = image ? await imageUrl(image, renderWidth * 2, Astro.isPrerendered) : undefined;
 ---
 
 <svg
@@ -43,9 +42,9 @@ const optimized = image ? await getImage({ src: image, width: Math.min(image.wid
   </defs>
   <g clip-path={`url(#${clipId})`} style="isolation: isolate">
     {
-      optimized ? (
+      href ? (
         <image
-          href={optimized.src}
+          href={href}
           width={width}
           height={height}
           preserveAspectRatio="xMidYMid slice"

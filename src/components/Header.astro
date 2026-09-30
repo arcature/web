@@ -32,8 +32,8 @@ const { site } = Astro.props;
     </nav>
 
     <div class="hidden items-center gap-3 lg:flex">
-      <Button href={site.login.href} label={site.login.label} variant="outline" />
-      <Button href={site.headerCta.href} label={site.headerCta.label} variant="light" />
+      <Button {...site.login} variant="outline" />
+      <Button {...site.headerCta} variant="light" />
     </div>
 
     <button
@@ -66,8 +66,8 @@ const { site } = Astro.props;
       </ul>
     </nav>
     <div class="mt-6 flex flex-wrap gap-3">
-      <Button href={site.login.href} label={site.login.label} variant="outline" />
-      <Button href={site.headerCta.href} label={site.headerCta.label} variant="light" />
+      <Button {...site.login} variant="outline" />
+      <Button {...site.headerCta} variant="light" />
     </div>
   </div>
 </header>

@@ -5,10 +5,8 @@
     "**/*"
   ],
   "exclude": [
-    "dist"
-  ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
-  }
+    "dist",
+    "studio",
+    ".sst"
+  ]
 }

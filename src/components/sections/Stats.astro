@@ -13,7 +13,7 @@ const { heading, body, cta, stats } = Astro.props;
     <h2 class="text-display max-w-[592px] capitalize">{heading}</h2>
     <div>
       <p class="max-w-[592px] text-lg leading-[1.2]">{body}</p>
-      <Button href={cta.href} label={cta.label} class="mt-6" />
+      <Button {...cta} class="mt-6" />
     </div>
   </div>
 

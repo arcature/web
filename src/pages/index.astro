@@ -12,39 +12,40 @@ import Statement from '../components/sections/Statement.astro';
 import Feature from '../components/sections/Feature.astro';
 import Cta from '../components/sections/Cta.astro';
 import { getHome, getSite } from '../lib/content';
+import { isDraftMode } from '../lib/sanity';
 
-const [site, home] = await Promise.all([getSite(), getHome()]);
+const [site, home] = await Promise.all([getSite(Astro), getHome(Astro)]);
 const { sections } = home;
-const firstHero = sections.findIndex((section) => section.discriminant === 'hero');
-const endsWithCta = sections.at(-1)?.discriminant === 'cta';
+const firstHero = sections.findIndex((section) => section._type === 'hero');
+const endsWithCta = sections.at(-1)?._type === 'cta';
 ---
 
-<Layout site={site} footerOverlap={endsWithCta}>
+<Layout site={site} footerOverlap={endsWithCta} draftMode={isDraftMode(Astro)}>
   {
     sections.map((section, index) => {
-      switch (section.discriminant) {
+      switch (section._type) {
         case 'hero':
-          return <Hero {...section.value} isFirst={index === firstHero} />;
+          return <Hero {...section} isFirst={index === firstHero} />;
         case 'logos':
-          return <Logos {...section.value} />;
+          return <Logos {...section} />;
         case 'intro':
-          return <Intro {...section.value} />;
+          return <Intro {...section} />;
         case 'lifecycle':
-          return <Lifecycle {...section.value} />;
+          return <Lifecycle {...section} />;
         case 'banner':
-          return <Banner {...section.value} />;
+          return <Banner {...section} />;
         case 'comparison':
-          return <Comparison {...section.value} />;
+          return <Comparison {...section} />;
         case 'teams':
-          return <Teams {...section.value} />;
+          return <Teams {...section} />;
         case 'stats':
-          return <Stats {...section.value} />;
+          return <Stats {...section} />;
         case 'statement':
-          return <Statement {...section.value} />;
+          return <Statement {...section} />;
         case 'feature':
-          return <Feature {...section.value} />;
+          return <Feature {...section} />;
         case 'cta':
-          return <Cta {...section.value} />;
+          return <Cta {...section} />;
       }
     })
   }

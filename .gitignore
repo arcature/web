@@ -6,4 +6,8 @@ node_modules/
 !.env.example
 .DS_Store
 npm-debug.log*
-.netlify/
+# SST
+.sst/
+
+# Intermediate output of `npm run typegen`
+schema.json

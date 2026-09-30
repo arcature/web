@@ -9,20 +9,23 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "studio": "npm --prefix studio run dev",
+    "typegen": "npm --prefix studio run typegen"
   },
   "dependencies": {
-    "@astrojs/netlify": "^8.2.6",
-    "@astrojs/react": "^7.0.0",
+    "@astrojs/node": "^11.1.6",
     "@fontsource-variable/inter-tight": "^5.3.0",
-    "@keystatic/astro": "^6.0.0",
-    "@keystatic/core": "^0.6.9",
+    "@sanity/client": "^8.9.0",
+    "@sanity/preview-url-secret": "^4.1.5",
+    "@sanity/visual-editing": "^6.1.2",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
     "astro": "^7.3.5",
+    "groq": "^6.17.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "serverless-http": "^4.0.0",
+    "styled-components": "^6.5.3",
     "tailwindcss": "^4.3.3"
   },
   "allowScripts": {
@@ -31,6 +34,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@types/node": "^26.6.3",
+    "sst": "^4.17.1",
     "typescript": "^6.0.3"
   }
 }

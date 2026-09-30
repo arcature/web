@@ -1,12 +1,13 @@
 ---
-import { Image } from 'astro:assets';
-import { resolveImage, type SectionOf } from '../../lib/content';
+import CmsImage from '../CmsImage.astro';
+import type { SectionOf } from '../../lib/content';
+import { resolveImage } from '../../lib/images';
 
 type Props = SectionOf<'logos'>;
 
 const { label, logos } = Astro.props;
 const items = logos
-  .map((logo) => ({ name: logo.name, image: resolveImage(logo.image) }))
+  .map((logo) => ({ name: logo.name ?? '', image: resolveImage(logo.image) }))
   .filter((logo) => logo.image !== undefined);
 ---
 
@@ -17,7 +18,7 @@ const items = logos
     {
       items.map((logo) => (
         <li class="flex h-10 items-center">
-          <Image src={logo.image!} alt={logo.name} class="h-auto max-h-10 w-auto max-w-[7.5rem]" />
+          <CmsImage image={logo.image!} alt={logo.name} class="h-auto max-h-10 w-auto max-w-[7.5rem]" />
         </li>
       ))
     }

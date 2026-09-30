@@ -1,0 +1,65 @@
+# Build the Astro site and deploy it to AWS with SST (see sst.config.ts)
+name: Deploy
+
+on:
+  # Code changes deploy both stages
+  push:
+    branches: ["main"]
+
+  # Sent by the Sanity webhook when content is published. Only production is
+  # rebuilt; the preview stage renders content on request.
+  repository_dispatch:
+    types: ["sanity-publish"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    strategy:
+      matrix:
+        stage: ${{ github.event_name == 'repository_dispatch' && fromJSON('["production"]') || fromJSON('["production", "preview"]') }}
+
+    runs-on: ubuntu-latest
+
+    # Per-stage variables (e.g. SITE_DOMAIN) live in GitHub environments named after the stage.
+    environment: ${{ matrix.stage }}
+
+    # One deploy per stage at a time, skipping runs queued between the run in progress and the latest queued.
+    # However, do NOT cancel in-progress runs as we want to allow these deployments to complete.
+    concurrency:
+      group: deploy-${{ matrix.stage }}
+      cancel-in-progress: false
+
+    env:
+      PUBLIC_SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
+      PUBLIC_SANITY_DATASET: ${{ vars.SANITY_DATASET }}
+      PUBLIC_SANITY_STUDIO_URL: ${{ vars.SANITY_STUDIO_URL }}
+      SANITY_PREVIEW: ${{ matrix.stage == 'preview' }}
+      SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "us-east-1"
+
+      - name: Deploy
+        run: npx sst deploy --stage ${{ matrix.stage }}

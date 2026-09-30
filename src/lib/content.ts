@@ -1,53 +1,31 @@
-import { createReader } from '@keystatic/core/reader';
-import type { ImageMetadata } from 'astro';
-import keystaticConfig from '../../keystatic.config';
+import { client, draftClient, isDraftMode, type RequestContext } from './sanity';
+import { homeQuery, siteQuery } from './queries';
+import type { HomeQueryResult, SiteQueryResult } from '../sanity.types';
 
-export const reader = createReader(process.cwd(), keystaticConfig);
-
-export type Site = NonNullable<Awaited<ReturnType<typeof reader.singletons.site.read>>>;
-export type Home = NonNullable<Awaited<ReturnType<typeof reader.singletons.home.read>>>;
+export type Site = NonNullable<SiteQueryResult>;
+export type Home = NonNullable<HomeQueryResult>;
 export type Section = Home['sections'][number];
-export type SectionOf<K extends Section['discriminant']> = Extract<Section, { discriminant: K }>['value'];
+export type SectionOf<K extends Section['_type']> = Omit<Extract<Section, { _type: K }>, '_type' | '_key'>;
 
-export async function getSite(): Promise<Site> {
-  const site = await reader.singletons.site.read();
+// Published content for prerendered pages; drafts (with stega) for preview requests in draft mode.
+const clientFor = (context: RequestContext) => (isDraftMode(context) ? draftClient() : client);
+
+export async function getSite(context: RequestContext): Promise<Site> {
+  const site = await clientFor(context).fetch(siteQuery);
 
   if (!site) {
-    throw new Error('Missing src/content/site.yaml');
+    throw new Error('Missing the "siteSettings" document in Sanity');
   }
 
   return site;
 }
 
-export async function getHome(): Promise<Home> {
-  const home = await reader.singletons.home.read();
+export async function getHome(context: RequestContext): Promise<Home> {
+  const home = await clientFor(context).fetch(homeQuery);
 
   if (!home) {
-    throw new Error('Missing src/content/home.yaml');
+    throw new Error('Missing the "homePage" document in Sanity');
   }
 
   return home;
-}
-
-// Keystatic stores images as "/src/assets/cms/..." paths; map them to Astro
-// image imports so they go through the asset pipeline.
-const images = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/cms/**/*.{jpg,jpeg,png,webp,avif,gif,svg}',
-  { eager: true },
-);
-
-export function resolveImage(path: string | null | undefined): ImageMetadata | undefined {
-  if (!path) {
-    return undefined;
-  }
-
-  const image = images[path];
-
-  if (!image) {
-    console.warn(`[content] Image not found: ${path}`);
-
-    return undefined;
-  }
-
-  return image.default;
 }

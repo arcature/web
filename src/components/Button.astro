@@ -1,7 +1,8 @@
 ---
+// Nullable to match CMS buttons, which may be half-filled in drafts.
 interface Props {
-  href: string;
-  label: string;
+  href?: string | null;
+  label?: string | null;
   variant?: 'dark' | 'light' | 'outline';
   class?: string;
 }

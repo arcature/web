@@ -17,7 +17,7 @@ const fills = [...accentCycle, 'red' as const];
     </div>
     <div class="px-4 pt-6 pb-12 md:col-span-3 md:min-h-[496px] md:px-8 md:pt-20">
       <p class="text-statement max-w-[1016px]">{body}</p>
-      <Button href={cta.href} label={cta.label} class="mt-6" />
+      <Button {...cta} class="mt-6" />
     </div>
   </div>
 

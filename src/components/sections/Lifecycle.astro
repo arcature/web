@@ -1,7 +1,8 @@
 ---
-import { Image } from 'astro:assets';
 import Button from '../Button.astro';
-import { resolveImage, type SectionOf } from '../../lib/content';
+import CmsImage from '../CmsImage.astro';
+import type { SectionOf } from '../../lib/content';
+import { resolveImage } from '../../lib/images';
 
 type Props = SectionOf<'lifecycle'>;
 
@@ -13,7 +14,7 @@ const fallback = items.map((item) => resolveImage(item.image)).find(Boolean);
 <section class="bg-paper">
   <div class="flex flex-col gap-6 border-b border-line px-4 py-12 md:min-h-[189px] md:flex-row md:items-center md:justify-between md:px-16">
     <h2 class="text-headline capitalize">{heading}</h2>
-    <Button href={cta.href} label={cta.label} class="self-start md:self-center" />
+    <Button {...cta} class="self-start md:self-center" />
   </div>
 
   <ol data-accordion>
@@ -22,7 +23,7 @@ const fallback = items.map((item) => resolveImage(item.image)).find(Boolean);
         const open = index === 0;
         const image = resolveImage(item.image) ?? fallback;
         // A reused fallback image is decorative; its description lives on the first item.
-        const alt = item.image ? item.imageAlt : '';
+        const alt = item.image ? (item.imageAlt ?? '') : '';
         const number = String(index + 1).padStart(2, '0');
 
         return (
@@ -71,7 +72,7 @@ const fallback = items.map((item) => resolveImage(item.image)).find(Boolean);
 
               {image && (
                 <div class="aspect-[480/425] overflow-hidden md:absolute md:inset-y-0 md:right-0 md:aspect-auto md:w-1/3">
-                  <Image src={image} alt={alt} widths={[480, 960]} sizes="(min-width: 768px) 33vw, 100vw" class="size-full object-cover" />
+                  <CmsImage image={image} alt={alt} widths={[480, 960]} sizes="(min-width: 768px) 33vw, 100vw" class="size-full object-cover" />
                 </div>
               )}
             </div>
