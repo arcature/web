@@ -1,15 +1,17 @@
 import { config, fields, singleton } from '@keystatic/core';
 
-const IMAGE_DIR = 'src/assets/cms/home';
-const IMAGE_PUBLIC_PATH = '/src/assets/cms/home/';
-
-const image = (label: string, description?: string) =>
+// Keystatic names uploaded files after their position in the content
+// (e.g. sections/0/value/image.jpg), so each singleton gets its own folder.
+const imageField = (folder: string) => (label: string, description?: string) =>
   fields.image({
     label,
     description,
-    directory: IMAGE_DIR,
-    publicPath: IMAGE_PUBLIC_PATH,
+    directory: `src/assets/cms/${folder}`,
+    publicPath: `/src/assets/cms/${folder}/`,
   });
+
+const image = imageField('home');
+const siteImage = imageField('site');
 
 const alt = (label = 'Image alt text') =>
   fields.text({
@@ -82,7 +84,7 @@ export default config({
         footer: fields.object(
           {
             tagline: fields.text({ label: 'Tagline' }),
-            image: image('Background image', 'Shown inside the mountain shape behind the tagline.'),
+            image: siteImage('Background image', 'Shown inside the mountain shape behind the tagline.'),
             social: linkList('Social links'),
             copyright: fields.text({ label: 'Copyright line' }),
             credit: fields.object(

@@ -21,7 +21,7 @@ headerCta:
   href: '#demo'
 footer:
   tagline: Simplify everything behind the scenes.
-  image: /src/assets/cms/home/footer.png
+  image: /src/assets/cms/site/footer/image.png
   social:
     - label: LinkedIn
       href: '#'

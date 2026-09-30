@@ -9,26 +9,26 @@ sections:
       cta:
         label: Request demo
         href: '#demo'
-      image: /src/assets/cms/home/hero.jpg
+      image: /src/assets/cms/home/sections/0/value/image.jpg
       imageAlt: A fan raises their hand toward a guitarist on a smoky, backlit stage.
   - discriminant: logos
     value:
       label: Trusted by
       logos:
         - name: MoMA
-          image: /src/assets/cms/home/logo-moma.svg
+          image: /src/assets/cms/home/sections/1/value/logos/0/image.svg
         - name: Oregon Symphony
-          image: /src/assets/cms/home/logo-oregon-symphony.png
+          image: /src/assets/cms/home/sections/1/value/logos/1/image.png
         - name: Cincinnati Symphony Orchestra
-          image: /src/assets/cms/home/logo-cso.png
+          image: /src/assets/cms/home/sections/1/value/logos/2/image.png
         - name: The Met
-          image: /src/assets/cms/home/logo-met.svg
+          image: /src/assets/cms/home/sections/1/value/logos/3/image.svg
         - name: New York City Ballet
-          image: /src/assets/cms/home/logo-nycb.svg
+          image: /src/assets/cms/home/sections/1/value/logos/4/image.svg
         - name: Boston Symphony Orchestra
-          image: /src/assets/cms/home/logo-bso.svg
+          image: /src/assets/cms/home/sections/1/value/logos/5/image.svg
         - name: New York Philharmonic
-          image: /src/assets/cms/home/logo-nyphil.svg
+          image: /src/assets/cms/home/sections/1/value/logos/6/image.svg
   - discriminant: intro
     value:
       eyebrow: |-
@@ -44,13 +44,19 @@ sections:
         href: '#features'
       features:
         - title: Tessitura-native
-          body: Live inventory, constituent ranking, and package logic direct from your CRM.
+          body: >-
+            Live inventory, constituent ranking, and package logic direct from
+            your CRM.
         - title: WCAG 2.2 AA
           body: Accessibility built in from the ground up, not retrofitted.
         - title: Stripe-powered
-          body: PCI-compliant payments with Apple Pay, Google Pay, Amazon Pay and more.
+          body: >-
+            PCI-compliant payments with Apple Pay, Google Pay, Amazon Pay and
+            more.
         - title: CMS-first
-          body: Flexible, module-based editorial system with digital asset management and workflow states.
+          body: >-
+            Flexible, module-based editorial system with digital asset
+            management and workflow states.
   - discriminant: lifecycle
     value:
       heading: Built for the full patron lifecycle.
@@ -59,57 +65,77 @@ sections:
         href: '#demo'
       items:
         - title: Ticketing & box office
-          tags: [Single tickets, Subscriptions, Pricing rules, Exchanges]
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
           lead: Ticketing that works for your team and your audience.
           body: >-
             Manage single tickets, subscriptions, seating, pricing, exchanges,
             and event access through one intuitive system. Fewer workarounds for
             your staff, and a smoother path to every performance for your
             audience.
-          image: /src/assets/cms/home/lifecycle-ticketing.jpg
-          imageAlt: Maestro's event filters for series, venue, and price shown over a concert stage.
+          image: /src/assets/cms/home/sections/3/value/items/0/image.jpg
+          imageAlt: >-
+            Maestro's event filters for series, venue, and price shown over a
+            concert stage.
         - title: Patron CRM
-          tags: [Single tickets, Subscriptions, Pricing rules, Exchanges]
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
           lead: See every audience relationship in full.
           body: >-
             Bring ticket buyers, subscribers, members, donors, and event
             attendees into one connected patron record. Understand every
             interaction without switching systems or piecing together incomplete
             data.
-          imageAlt: ''
         - title: Memberships & subscriptions
-          tags: [Single tickets, Subscriptions, Pricing rules, Exchanges]
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
           lead: Build loyalty without adding more admin.
           body: >-
             Simplify subscriptions, packages, renewals, member benefits, and
             communications while giving your team a clearer view of long-term
             audience engagement.
-          imageAlt: ''
         - title: Fundraising
-          tags: [Single tickets, Subscriptions, Pricing rules, Exchanges]
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
           lead: Turn audience engagement into lasting support.
           body: >-
             Connect attendance, membership, and giving history to identify
             opportunities, personalize outreach, and build stronger donor
             relationships.
-          imageAlt: ''
         - title: Marketing & communications
-          tags: [Single tickets, Subscriptions, Pricing rules, Exchanges]
-          lead: ''
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
           body: >-
             Use connected patron data to build smarter segments, personalize
             communications, and coordinate campaigns across your organization,
             all without exporting lists or piecing together information from
             separate systems.
-          imageAlt: ''
         - title: Reporting & analytics
-          tags: [Single tickets, Subscriptions, Pricing rules, Exchanges]
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
           lead: Answers without the reporting maze.
           body: >-
             Access real-time insights across sales, attendance, patron behavior,
             subscriptions, and giving without exporting data from multiple
             systems or rebuilding the same reports.
-          imageAlt: ''
   - discriminant: banner
     value:
       heading: Leave the complexity behind.
@@ -180,7 +206,7 @@ sections:
     value:
       lineOne: Built for the way
       lineTwo: performing arts organizations actually work.
-      image: /src/assets/cms/home/stage.png
+      image: /src/assets/cms/home/sections/8/value/image.png
       imageAlt: A lone performer stands on a box beneath a ring of stage lights.
   - discriminant: feature
     value:
@@ -192,8 +218,10 @@ sections:
       cta:
         label: Request demo
         href: '#demo'
-      image: /src/assets/cms/home/live-performance.jpg
-      imageAlt: An event listing for Gregory Alan Isakov with the Oregon Symphony, shown over a blurred performer.
+      image: /src/assets/cms/home/sections/9/value/image.jpg
+      imageAlt: >-
+        An event listing for Gregory Alan Isakov with the Oregon Symphony, shown
+        over a blurred performer.
       imageSide: right
   - discriminant: feature
     value:
@@ -205,8 +233,10 @@ sections:
       cta:
         label: Request demo
         href: '#demo'
-      image: /src/assets/cms/home/one-audience.jpg
-      imageAlt: An Oregon Symphony donation form with one-time and recurring gift options.
+      image: /src/assets/cms/home/sections/10/value/image.jpg
+      imageAlt: >-
+        An Oregon Symphony donation form with one-time and recurring gift
+        options.
       imageSide: left
   - discriminant: feature
     value:
@@ -217,7 +247,7 @@ sections:
       cta:
         label: Request demo
         href: '#demo'
-      image: /src/assets/cms/home/powerful.jpg
+      image: /src/assets/cms/home/sections/11/value/image.jpg
       imageAlt: Date and category filters for an event calendar.
       imageSide: right
   - discriminant: feature
@@ -229,8 +259,10 @@ sections:
       cta:
         label: Request demo
         href: '#demo'
-      image: /src/assets/cms/home/audience-data.jpg
-      imageAlt: A seat selection for Lower Balcony B, row Q, seat 3, with a view of the stage and a $94 total.
+      image: /src/assets/cms/home/sections/12/value/image.jpg
+      imageAlt: >-
+        A seat selection for Lower Balcony B, row Q, seat 3, with a view of the
+        stage and a $94 total.
       imageSide: left
   - discriminant: cta
     value:
