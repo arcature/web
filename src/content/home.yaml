@@ -1,0 +1,275 @@
+sections:
+  - discriminant: hero
+    value:
+      heading: Simplify everything behind the scenes.
+      body: >-
+        Maestro connects every part of your organization, simplifying the
+        complex systems behind ticketing, patron relationships, memberships,
+        fundraising, and reporting.
+      cta:
+        label: Request demo
+        href: '#demo'
+      image: /src/assets/cms/home/sections/0/value/image.jpg
+      imageAlt: A fan raises their hand toward a guitarist on a smoky, backlit stage.
+  - discriminant: logos
+    value:
+      label: Trusted by
+      logos:
+        - name: MoMA
+          image: /src/assets/cms/home/sections/1/value/logos/0/image.svg
+        - name: Oregon Symphony
+          image: /src/assets/cms/home/sections/1/value/logos/1/image.png
+        - name: Cincinnati Symphony Orchestra
+          image: /src/assets/cms/home/sections/1/value/logos/2/image.png
+        - name: The Met
+          image: /src/assets/cms/home/sections/1/value/logos/3/image.svg
+        - name: New York City Ballet
+          image: /src/assets/cms/home/sections/1/value/logos/4/image.svg
+        - name: Boston Symphony Orchestra
+          image: /src/assets/cms/home/sections/1/value/logos/5/image.svg
+        - name: New York Philharmonic
+          image: /src/assets/cms/home/sections/1/value/logos/6/image.svg
+  - discriminant: intro
+    value:
+      eyebrow: |-
+        One platform.
+        Every part of your organization.
+      body: >-
+        From the first ticket purchase to the next donation, Maestro connects
+        every audience interaction in one place. Your box office, marketing,
+        development, and leadership teams work from the same information,
+        without disconnected tools or duplicate records.
+      cta:
+        label: Explore features
+        href: '#features'
+      features:
+        - title: Tessitura-native
+          body: >-
+            Live inventory, constituent ranking, and package logic direct from
+            your CRM.
+        - title: WCAG 2.2 AA
+          body: Accessibility built in from the ground up, not retrofitted.
+        - title: Stripe-powered
+          body: >-
+            PCI-compliant payments with Apple Pay, Google Pay, Amazon Pay and
+            more.
+        - title: CMS-first
+          body: >-
+            Flexible, module-based editorial system with digital asset
+            management and workflow states.
+  - discriminant: lifecycle
+    value:
+      heading: Built for the full patron lifecycle.
+      cta:
+        label: Request demo
+        href: '#demo'
+      items:
+        - title: Ticketing & box office
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
+          lead: Ticketing that works for your team and your audience.
+          body: >-
+            Manage single tickets, subscriptions, seating, pricing, exchanges,
+            and event access through one intuitive system. Fewer workarounds for
+            your staff, and a smoother path to every performance for your
+            audience.
+          image: /src/assets/cms/home/sections/3/value/items/0/image.jpg
+          imageAlt: >-
+            Maestro's event filters for series, venue, and price shown over a
+            concert stage.
+        - title: Patron CRM
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
+          lead: See every audience relationship in full.
+          body: >-
+            Bring ticket buyers, subscribers, members, donors, and event
+            attendees into one connected patron record. Understand every
+            interaction without switching systems or piecing together incomplete
+            data.
+        - title: Memberships & subscriptions
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
+          lead: Build loyalty without adding more admin.
+          body: >-
+            Simplify subscriptions, packages, renewals, member benefits, and
+            communications while giving your team a clearer view of long-term
+            audience engagement.
+        - title: Fundraising
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
+          lead: Turn audience engagement into lasting support.
+          body: >-
+            Connect attendance, membership, and giving history to identify
+            opportunities, personalize outreach, and build stronger donor
+            relationships.
+        - title: Marketing & communications
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
+          body: >-
+            Use connected patron data to build smarter segments, personalize
+            communications, and coordinate campaigns across your organization,
+            all without exporting lists or piecing together information from
+            separate systems.
+        - title: Reporting & analytics
+          tags:
+            - Single tickets
+            - Subscriptions
+            - Pricing rules
+            - Exchanges
+          lead: Answers without the reporting maze.
+          body: >-
+            Access real-time insights across sales, attendance, patron behavior,
+            subscriptions, and giving without exporting data from multiple
+            systems or rebuilding the same reports.
+  - discriminant: banner
+    value:
+      heading: Leave the complexity behind.
+      body: >-
+        Legacy platforms were built around complicated workflows and
+        disconnected departments. Maestro brings your people, data, and audience
+        operations into one modern system designed around how performing arts
+        organizations work today.
+      cta:
+        label: Request demo
+        href: '#demo'
+      accent: blue
+  - discriminant: comparison
+    value:
+      before:
+        title: Legacy systems
+        items:
+          - Data separated across teams
+          - Complicated workflows and workarounds
+          - Reports assembled manually
+          - Limited visibility into patron relationships
+          - Costly customization and maintenance
+          - Lengthy training and implementation
+      after:
+        title: Maestro
+        items:
+          - One connected patron record
+          - Intuitive workflows across departments
+          - Real-time reporting and shared insights
+          - A complete view of every audience relationship
+          - Flexible tools that evolve with your organization
+          - Faster adoption for your entire team
+  - discriminant: teams
+    value:
+      heading: One platform, built for every team.
+      accent: olive
+      items:
+        - title: Box Office
+          body: Simpler selling, seating, exchanges, and audience service.
+        - title: Marketing
+          body: Clearer segmentation and a complete view of patron behavior.
+        - title: Development
+          body: Attendance and engagement data connected directly to giving.
+        - title: Leadership
+          body: Real-time visibility across revenue, audiences, and operations.
+  - discriminant: stats
+    value:
+      heading: How unified operations perform
+      body: >-
+        From the first ticket purchase to the next donation, Maestro connects
+        every audience interaction in one place. Your box office, marketing,
+        development, and leadership teams work from the same information,
+        without disconnected tools or duplicate records.
+      cta:
+        label: Request demo
+        href: '#demo'
+      stats:
+        - label: Data point
+          value: 3x
+          bar: 38
+        - label: Data point
+          value: '#1'
+          bar: 52
+        - label: Data point
+          value: 50%
+          bar: 67
+  - discriminant: statement
+    value:
+      lineOne: Built for the way
+      lineTwo: performing arts organizations actually work.
+      image: /src/assets/cms/home/sections/8/value/image.png
+      imageAlt: A lone performer stands on a box beneath a ring of stage lights.
+  - discriminant: feature
+    value:
+      heading: Made for live performance.
+      body: >-
+        Maestro is designed around the realities of performing arts
+        organizations, from reserved seating and subscriptions to donor
+        relationships and complex event calendars.
+      cta:
+        label: Request demo
+        href: '#demo'
+      image: /src/assets/cms/home/sections/9/value/image.jpg
+      imageAlt: >-
+        An event listing for Gregory Alan Isakov with the Oregon Symphony, shown
+        over a blurred performer.
+      imageSide: right
+  - discriminant: feature
+    value:
+      heading: One audience. One shared source of truth.
+      body: >-
+        Every ticket, attendance record, membership, donation, and interaction
+        contributes to one connected patron profile your entire organization can
+        use.
+      cta:
+        label: Request demo
+        href: '#demo'
+      image: /src/assets/cms/home/sections/10/value/image.jpg
+      imageAlt: >-
+        An Oregon Symphony donation form with one-time and recurring gift
+        options.
+      imageSide: left
+  - discriminant: feature
+    value:
+      heading: Powerful without feeling complicated.
+      body: >-
+        Maestro simplifies complex operations into clear, intuitive workflows
+        for everyone from the box office to the executive team.
+      cta:
+        label: Request demo
+        href: '#demo'
+      image: /src/assets/cms/home/sections/11/value/image.jpg
+      imageAlt: Date and category filters for an event calendar.
+      imageSide: right
+  - discriminant: feature
+    value:
+      heading: Turn audience data into meaningful action.
+      body: >-
+        See patterns across attendance, engagement, subscriptions, and giving so
+        your team can make better decisions and build stronger relationships.
+      cta:
+        label: Request demo
+        href: '#demo'
+      image: /src/assets/cms/home/sections/12/value/image.jpg
+      imageAlt: >-
+        A seat selection for Lower Balcony B, row Q, seat 3, with a view of the
+        stage and a $94 total.
+      imageSide: left
+  - discriminant: cta
+    value:
+      heading: Your organization is ready. Is your software?
+      body: >-
+        See how Maestro can simplify your operations and strengthen every
+        audience relationship.
+      cta:
+        label: Request demo
+        href: '#demo'

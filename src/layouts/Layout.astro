@@ -1,0 +1,39 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import type { Site } from '../lib/content';
+
+interface Props {
+  site: Site;
+  title?: string;
+  footerOverlap?: boolean;
+}
+
+const { site, title = site.title, footerOverlap } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={site.description} />
+    <title>{title}</title>
+  </head>
+  <body class="overflow-x-clip">
+    <a
+      href="#main"
+      class="label sr-only z-50 bg-paper px-4 py-3 text-ink focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+    >
+      Skip to content
+    </a>
+    <Header site={site} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer site={site} overlapPrevious={footerOverlap} />
+  </body>
+</html>

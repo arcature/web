@@ -1,0 +1,19 @@
+---
+import Button from '../Button.astro';
+import { accentBg } from '../../lib/accent';
+import type { SectionOf } from '../../lib/content';
+
+type Props = SectionOf<'banner'>;
+
+const { heading, body, cta, accent } = Astro.props;
+---
+
+<section class="grid md:grid-cols-2">
+  <div class:list={['px-4 py-12 text-paper md:min-h-[281px] md:px-16 md:py-16', accentBg[accent]]}>
+    <h2 class="text-headline max-w-[592px] capitalize">{heading}</h2>
+  </div>
+  <div class="bg-mist px-4 py-12 md:px-16 md:py-16">
+    <p class="max-w-[592px] text-lg leading-[1.2]">{body}</p>
+    <Button href={cta.href} label={cta.label} class="mt-6" />
+  </div>
+</section>

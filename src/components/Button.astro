@@ -1,0 +1,31 @@
+---
+interface Props {
+  href: string;
+  label: string;
+  variant?: 'dark' | 'light' | 'outline';
+  class?: string;
+}
+
+const { href, label, variant = 'dark', class: className } = Astro.props;
+
+const variants = {
+  dark: 'bg-ink text-paper hover:bg-ink/85',
+  light: 'bg-paper text-ink hover:bg-mist',
+  outline: 'border border-paper text-paper hover:bg-paper hover:text-ink',
+};
+---
+
+{
+  label && (
+    <a
+      href={href}
+      class:list={[
+        'label inline-flex min-h-11 items-center justify-center px-4 whitespace-nowrap transition-colors',
+        variants[variant],
+        className,
+      ]}
+    >
+      {label}
+    </a>
+  )
+}

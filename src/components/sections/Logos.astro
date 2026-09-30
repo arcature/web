@@ -1,0 +1,25 @@
+---
+import { Image } from 'astro:assets';
+import { resolveImage, type SectionOf } from '../../lib/content';
+
+type Props = SectionOf<'logos'>;
+
+const { label, logos } = Astro.props;
+const items = logos
+  .map((logo) => ({ name: logo.name, image: resolveImage(logo.image) }))
+  .filter((logo) => logo.image !== undefined);
+---
+
+<section class="bg-paper" aria-label={label}>
+  <ul
+    class="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center gap-x-12 gap-y-8 px-4 py-9 md:justify-between md:px-16"
+  >
+    {
+      items.map((logo) => (
+        <li class="flex h-10 items-center">
+          <Image src={logo.image!} alt={logo.name} class="h-auto max-h-10 w-auto max-w-[7.5rem]" />
+        </li>
+      ))
+    }
+  </ul>
+</section>
