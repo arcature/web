@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/sections/Hero.astro';
+import Logos from '../components/sections/Logos.astro';
+import Intro from '../components/sections/Intro.astro';
+import Lifecycle from '../components/sections/Lifecycle.astro';
+import Banner from '../components/sections/Banner.astro';
+import Comparison from '../components/sections/Comparison.astro';
+import Teams from '../components/sections/Teams.astro';
+import Stats from '../components/sections/Stats.astro';
+import Statement from '../components/sections/Statement.astro';
+import Feature from '../components/sections/Feature.astro';
+import Cta from '../components/sections/Cta.astro';
+import { getHome, getSite } from '../lib/content';
+
+const [site, home] = await Promise.all([getSite(), getHome()]);
+const { sections } = home;
+const firstHero = sections.findIndex((section) => section.discriminant === 'hero');
+const endsWithCta = sections.at(-1)?.discriminant === 'cta';
+---
+
+<Layout site={site} footerOverlap={endsWithCta}>
+  {
+    sections.map((section, index) => {
+      switch (section.discriminant) {
+        case 'hero':
+          return <Hero {...section.value} isFirst={index === firstHero} />;
+        case 'logos':
+          return <Logos {...section.value} />;
+        case 'intro':
+          return <Intro {...section.value} />;
+        case 'lifecycle':
+          return <Lifecycle {...section.value} />;
+        case 'banner':
+          return <Banner {...section.value} />;
+        case 'comparison':
+          return <Comparison {...section.value} />;
+        case 'teams':
+          return <Teams {...section.value} />;
+        case 'stats':
+          return <Stats {...section.value} />;
+        case 'statement':
+          return <Statement {...section.value} />;
+        case 'feature':
+          return <Feature {...section.value} />;
+        case 'cta':
+          return <Cta {...section.value} />;
+      }
+    })
+  }
+</Layout>

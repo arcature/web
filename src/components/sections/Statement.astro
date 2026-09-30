@@ -1,0 +1,29 @@
+---
+import ShapedImage from '../ShapedImage.astro';
+import { resolveImage, type SectionOf } from '../../lib/content';
+
+type Props = SectionOf<'statement'>;
+
+const { lineOne, lineTwo, image, imageAlt } = Astro.props;
+
+// Symmetric "keyhole" silhouette from the Figma union.
+const SHAPE =
+  'M372.884 0L472.471 65.6367L433.994 254.625L493.407 317.998L493.407 508.118L424.94 679L68.4658 679L0 508.118L0 317.998L59.4121 254.625L20.9355 65.6367L120.522 0L372.884 0Z';
+---
+
+<section class="bg-ink text-paper">
+  <div class="relative mx-auto flex max-w-[1440px] flex-col gap-10 px-4 py-16 md:block md:min-h-[800px] md:py-0">
+    <div class="mx-auto w-full max-w-[493px] text-paper/10 md:absolute md:top-[61px] md:left-1/2 md:w-[34.25%] md:-translate-x-1/2">
+      <ShapedImage image={resolveImage(image)} alt={imageAlt} path={SHAPE} width={493.41} height={679} tint="#676f49"
+        filter="brightness(1.5) contrast(0.84) saturate(1.24)"
+      />
+    </div>
+    <h2 class="text-display relative -order-1 capitalize md:absolute md:top-[110px] md:left-[76px] md:max-w-[576px]">
+      {lineOne}
+      <span class="sr-only">{lineTwo}</span>
+    </h2>
+    <p class="text-display relative capitalize md:absolute md:top-[467px] md:left-[57%] md:max-w-[541px]" aria-hidden="true">
+      {lineTwo}
+    </p>
+  </div>
+</section>

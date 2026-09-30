@@ -1,0 +1,27 @@
+---
+import { Image } from 'astro:assets';
+import Button from '../Button.astro';
+import { resolveImage, type SectionOf } from '../../lib/content';
+
+type Props = SectionOf<'feature'>;
+
+const { heading, body, cta, image, imageAlt, imageSide } = Astro.props;
+const src = resolveImage(image);
+---
+
+<section class="grid bg-paper md:grid-cols-2">
+  <div class="flex flex-col justify-between gap-16 px-4 py-12 md:aspect-square md:p-16">
+    <h2 class="text-headline max-w-[592px] capitalize">{heading}</h2>
+    <div>
+      <p class="max-w-[540px] text-lg leading-[1.2]">{body}</p>
+      <Button href={cta.href} label={cta.label} class="mt-6" />
+    </div>
+  </div>
+  {
+    src && (
+      <div class:list={['aspect-square bg-mist', imageSide === 'left' && 'md:-order-1']}>
+        <Image src={src} alt={imageAlt} widths={[720, 1440]} sizes="(min-width: 768px) 50vw, 100vw" class="size-full object-cover" />
+      </div>
+    )
+  }
+</section>
