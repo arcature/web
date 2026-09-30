@@ -8,8 +8,8 @@ export default defineCliConfig({
   // Deployed to https://maestro.sanity.studio by `npm run deploy`.
   studioHost: 'maestro',
   typegen: {
-    path: '../src/**/*.ts',
-    schema: '../schema.json',
-    generates: '../src/sanity.types.ts',
+    path: '../frontend/src/**/*.ts',
+    schema: 'schema.json',
+    generates: '../frontend/src/sanity.types.ts',
   },
 });

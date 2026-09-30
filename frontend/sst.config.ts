@@ -38,7 +38,7 @@ export default $config({
       // See lambda/server/handler.mjs for why dist/client is copied to lambda/client.
       new sst.aws.Function('Server', {
         handler: 'lambda/server/handler.handler',
-        runtime: 'nodejs22.x',
+        runtime: 'nodejs24.x', // Keep in step with .nvmrc
         memory: '1024 MB',
         timeout: '20 seconds',
         copyFiles: [{ from: 'dist/client', to: 'lambda/client' }],

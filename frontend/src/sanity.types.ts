@@ -14,7 +14,7 @@
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
-// Source: ../schema.json
+// Source: schema.json
 export type HeroCta = {
   label?: string;
   href?: string;
@@ -461,7 +461,7 @@ export type AllSanitySchemaTypes =
   | Geopoint
   | Slug;
 
-// Source: ../src/lib/queries.ts
+// Source: ../frontend/src/lib/queries.ts
 // Variable: siteQuery
 // Query: *[_type == "siteSettings" && _id == "siteSettings"][0]{  title,  description,  hideFromSearchEngines,  "navigation": coalesce(navigation[]{ label, href }, []),  login{ label, href },  headerCta{ label, href },  footer{    tagline,    "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height },    "social": coalesce(social[]{ label, href }, []),    copyright,    credit{ label, href }  }}
 export type SiteQueryResult = {
@@ -503,7 +503,7 @@ export type SiteQueryResult = {
   } | null;
 } | null;
 
-// Source: ../src/lib/queries.ts
+// Source: ../frontend/src/lib/queries.ts
 // Variable: homeQuery
 // Query: *[_type == "homePage" && _id == "homePage"][0]{  "sections": coalesce(sections[]{    _key,    _type,    _type == "hero" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },    _type == "logos" => { label, "logos": coalesce(logos[]{ _key, name, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height } }, []) },    _type == "intro" => { eyebrow, body, cta{ label, href }, "features": coalesce(features[]{ _key, title, body }, []) },    _type == "lifecycle" => {      heading,      cta{ label, href },      "items": coalesce(items[]{ _key, title, "tags": coalesce(tags, []), lead, body, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt }, [])    },    _type == "banner" => { heading, body, cta{ label, href }, accent },    _type == "comparison" => {      "before": { "title": before.title, "items": coalesce(before.items, []) },      "after": { "title": after.title, "items": coalesce(after.items, []) }    },    _type == "teams" => { heading, accent, "items": coalesce(items[]{ _key, title, body }, []) },    _type == "stats" => { heading, body, cta{ label, href }, "stats": coalesce(stats[]{ _key, label, value, bar }, []) },    _type == "statement" => { lineOne, lineTwo, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },    _type == "feature" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt, imageSide },    _type == "cta" => { heading, body, cta{ label, href } }  }, [])}
 export type HomeQueryResult = {

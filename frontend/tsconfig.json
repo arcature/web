@@ -6,7 +6,7 @@
   ],
   "exclude": [
     "dist",
-    "studio",
-    ".sst"
+    ".sst",
+    "sst.config.ts"
   ]
 }

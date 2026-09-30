@@ -6,22 +6,28 @@ Built from the
 
 ## Develop
 
+The repo is an npm workspace: the Astro site is in `frontend/` and the Sanity
+Studio is in `studio/`, sharing one `package-lock.json`. Run these from the repo
+root:
+
 ```bash
-cp .env.example .env          # set PUBLIC_SANITY_PROJECT_ID=t88ezwbe
+cp frontend/.env.example frontend/.env   # set PUBLIC_SANITY_PROJECT_ID=t88ezwbe
 cp studio/.env.example studio/.env
 npm install
-npm install --prefix studio
 npm run dev                   # site: http://localhost:4321
 npm run studio                # Studio: http://localhost:3333
 ```
 
+Add a dependency to one package with `npm install <name> -w frontend` (or
+`-w studio`).
+
 `npm run dev` shows published content. To try visual editing locally, add
-`SANITY_PREVIEW=true` and a `SANITY_API_READ_TOKEN` to `.env`, restart, and open
+`SANITY_PREVIEW=true` and a `SANITY_API_READ_TOKEN` to `frontend/.env`, restart, and open
 **Presentation** in the local Studio.
 
 After changing the schema (`studio/schemaTypes/`) or a query
-(`src/lib/queries.ts`), run `npm run typegen` to regenerate
-`src/sanity.types.ts`.
+(`frontend/src/lib/queries.ts`), run `npm run typegen` to
+regenerate `frontend/src/sanity.types.ts`.
 
 ## Editing content
 
@@ -54,13 +60,13 @@ Headings are rendered in title case by CSS, so type them in sentence case.
 
 ## How it's built and deployed
 
-`sst.config.ts` defines two stages on AWS, both deployed by
+`frontend/sst.config.ts` defines two stages on AWS, both deployed by
 `.github/workflows/deploy.yml`:
 
 | | Production | Preview |
 | --- | --- | --- |
 | Build | `npm run build`: every page prerendered with published content; Sanity images downloaded and optimized into `dist/client/_astro` | `SANITY_PREVIEW=true npm run build`: every page rendered on request |
-| Hosting | S3 + CloudFront (static files only, no server) | Lambda (`lambda/server/handler.mjs`) behind CloudFront |
+| Hosting | S3 + CloudFront (static files only, no server) | Lambda (`frontend/lambda/server/handler.mjs`) behind CloudFront |
 | Deploys | Push to `main`, and every **publish** in Sanity (webhook) | Push to `main` |
 | Indexed | Until launch, blocked by **Site settings → Hide from search engines** | Never (`noindex`, `no-store`) |
 
@@ -79,13 +85,13 @@ build log if an image is missing on the site.
      credentials allowed.
    - *API → Tokens*: create a **Viewer** token for the preview stage.
    - Set `SANITY_STUDIO_PREVIEW_URL` in `studio/.env` to the preview URL, then
-     deploy the Studio with `npm run deploy --prefix studio`.
+     deploy the Studio with `npm run deploy:studio`.
 2. **GitHub.** Under *Settings → Environments*, create `production` and
    `preview`. Add repository variables `SANITY_PROJECT_ID`, `SANITY_DATASET`, and
    `SANITY_STUDIO_URL`, plus a `SITE_DOMAIN` per environment once the domains
    are chosen. `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` are reused.
 3. **Preview secret.** Store the Viewer token for the preview stage:
-   `npx sst secret set SanityReadToken <token> --stage preview`.
+   `npx sst secret set SanityReadToken <token> --stage preview` (from `frontend/`).
 4. **Publish webhook.** In Sanity, *API → Webhooks → Create*:
    - URL: `https://api.github.com/repos/arcature/web/dispatches`, method `POST`
    - Filter: `_type in ["siteSettings", "homePage"]`; trigger on create, update,
@@ -103,7 +109,7 @@ uncheck **Site settings → Hide from search engines** and publish.
 ## Notes
 
 - **Font:** the design uses FT System (trial). Inter Tight stands in; change
-  `--font-sans` in `src/styles/global.css` once a web license is in place.
+  `--font-sans` in `frontend/src/styles/global.css` once a web license is in place.
 - **Composite images** (UI mockups over photos) were exported flat from Figma.
   Shaped crops (hero, statement, footer) are SVG clip paths, so any photo can be
   swapped in the CMS without losing the shape.

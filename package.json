@@ -1,40 +1,23 @@
 {
-  "name": "maestro-for-mary",
+  "name": "arcature-web",
+  "private": true,
   "type": "module",
-  "version": "0.0.1",
   "engines": {
     "node": ">=22.12.0"
   },
+  "workspaces": [
+    "frontend",
+    "studio"
+  ],
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro",
-    "studio": "npm --prefix studio run dev",
-    "typegen": "npm --prefix studio run typegen"
-  },
-  "dependencies": {
-    "@astrojs/node": "^11.1.6",
-    "@fontsource-variable/inter-tight": "^5.3.0",
-    "@sanity/client": "^8.9.0",
-    "@sanity/preview-url-secret": "^4.1.5",
-    "@sanity/visual-editing": "^6.1.2",
-    "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.3.5",
-    "groq": "^6.17.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "serverless-http": "^4.0.0",
-    "styled-components": "^6.5.3",
-    "tailwindcss": "^4.3.3"
+    "dev": "npm run dev -w frontend",
+    "build": "npm run build -w frontend",
+    "check": "npm run astro -w frontend -- check",
+    "studio": "npm run dev -w studio",
+    "deploy:studio": "npm run deploy -w studio",
+    "typegen": "npm run typegen -w studio"
   },
   "allowScripts": {
     "esbuild": true
-  },
-  "devDependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@types/node": "^26.6.3",
-    "sst": "^4.17.1",
-    "typescript": "^6.0.3"
   }
 }
