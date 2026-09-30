@@ -52,12 +52,11 @@ const multiline = (label: string, description?: string) =>
   fields.text({ label, description, multiline: true });
 
 export default config({
-  storage: import.meta.env.PUBLIC_KEYSTATIC_GITHUB_REPO
-    ? {
-        kind: 'github',
-        repo: import.meta.env.PUBLIC_KEYSTATIC_GITHUB_REPO as `${string}/${string}`,
-      }
-    : { kind: 'local' },
+  // The hosted admin (Netlify) commits to GitHub; `npm run dev` edits local files.
+  storage:
+    import.meta.env.PUBLIC_KEYSTATIC_STORAGE === 'github'
+      ? { kind: 'github', repo: { owner: 'arcature', name: 'web' } }
+      : { kind: 'local' },
 
   ui: {
     brand: { name: 'Maestro' },
@@ -72,6 +71,11 @@ export default config({
       schema: {
         title: fields.text({ label: 'Site title', defaultValue: 'Maestro' }),
         description: multiline('Meta description'),
+        hideFromSearchEngines: fields.checkbox({
+          label: 'Hide from search engines',
+          description: 'Keep checked until launch. Unchecking lets Google and others index the site.',
+          defaultValue: true,
+        }),
         navigation: linkList('Main navigation'),
         login: fields.object(
           {

@@ -1,0 +1,22 @@
+# Netlify hosts only the Keystatic admin. The public site is deployed to AWS
+# by .github/workflows/static.yml.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  KEYSTATIC_ADMIN = "true"
+  PUBLIC_KEYSTATIC_STORAGE = "github"
+
+# Don't serve a second copy of the public site from the admin host.
+[[redirects]]
+  from = "/"
+  to = "/keystatic"
+  status = 302
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

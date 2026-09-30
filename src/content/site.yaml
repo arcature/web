@@ -2,6 +2,7 @@ title: Maestro
 description: >-
   Maestro connects every part of your performing arts organization, simplifying
   ticketing, patron relationships, memberships, fundraising, and reporting.
+hideFromSearchEngines: true
 navigation:
   - label: Product
     href: '#product'

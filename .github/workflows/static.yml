@@ -1,8 +1,8 @@
-# Simple workflow for deploying static content to S3
+# Build the Astro site and deploy the static output to S3
 name: Deploy static content to S3
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the default branch (including Keystatic edits)
   push:
     branches: ["main"]
 
@@ -22,6 +22,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -29,12 +41,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: "us-east-1"
 
+      # Fingerprinted assets can be cached forever; everything else is revalidated.
       - name: Sync files to S3
         run: |
-          aws s3 sync . "s3://fictive-arc" \
+          aws s3 sync dist/_astro "s3://fictive-arc/_astro" \
             --delete \
-            --exclude ".git/*" \
-            --exclude ".github/*"
+            --cache-control "public, max-age=31536000, immutable"
+          aws s3 sync dist "s3://fictive-arc" \
+            --delete \
+            --exclude "_astro/*" \
+            --cache-control "public, max-age=0, must-revalidate"
 
       - name: Invalidate CloudFront cache
         run: |
