@@ -7,7 +7,6 @@ on:
     paths:
       - '.github/workflows/deploy-studio.yml'
       - 'studio/**'
-      - 'vendor/**'
       - 'package.json'
       - 'package-lock.json'
 
@@ -25,6 +24,7 @@ jobs:
       SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
       SANITY_STUDIO_DATASET: ${{ vars.SANITY_DATASET }}
       SANITY_STUDIO_PREVIEW_URL: ${{ vars.SANITY_STUDIO_PREVIEW_URL }}
+      SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT: ${{ secrets.SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT }}
 
     steps:
       - uses: actions/checkout@v6

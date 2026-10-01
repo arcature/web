@@ -2,12 +2,18 @@ import { visionTool } from '@sanity/vision';
 import { defineConfig } from 'sanity';
 import { presentationTool } from 'sanity/presentation';
 import { structureTool } from 'sanity/structure';
+import { webhooksTrigger } from 'sanity-plugin-webhooks-trigger';
 
 import { schemaTypes, singletons } from './schemaTypes';
 
 const singletonTypes = new Set<string>(
   singletons.map((singleton) => singleton.type),
 );
+
+// Encrypts the auth tokens the Deploy tool stores with each webhook. Changing
+// it makes saved tokens unreadable, so they'd have to be entered again.
+const webhooksEncryptionSalt =
+  process.env.SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT || undefined;
 
 // Every document on this site is shown on the home page.
 const onHomePage = { locations: [{ title: 'Home page', href: '/' }] };
@@ -44,6 +50,14 @@ export default defineConfig({
       resolve: {
         locations: { homePage: onHomePage, siteSettings: onHomePage },
       },
+    }),
+    webhooksTrigger({
+      title: 'Deploy',
+      pageTitle: 'Trigger Deploys',
+      text: 'By clicking the appropriate button below, you can trigger a deploy of the latest content to the desired environment.',
+      encryptionSalt: webhooksEncryptionSalt,
+      // The event .github/workflows/production.yml listens for.
+      githubEventType: 'sanity-publish',
     }),
     visionTool(),
   ],

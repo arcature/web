@@ -95,15 +95,16 @@ build log if an image is missing on the site.
 2. **GitHub.** Under _Settings → Environments_, create `qa` and
    `production`, then add (all workflows use these names):
 
-   | Name                                         | Kind                                      | Value                            |
-   | -------------------------------------------- | ----------------------------------------- | -------------------------------- |
-   | `SANITY_PROJECT_ID`                          | Repository variable                       | `t88ezwbe`                       |
-   | `SANITY_DATASET`                             | Repository variable                       | `production`                     |
-   | `SANITY_STUDIO_URL`                          | Repository variable                       | `https://maestro.sanity.studio`  |
-   | `SANITY_STUDIO_PREVIEW_URL`                  | Repository variable                       | The QA URL                       |
-   | `SITE_DOMAIN`                                | Environment variable (`qa`, `production`) | Each stage's domain, once chosen |
-   | `SANITY_AUTH_TOKEN`                          | Repository secret                         | The Deploy Studio token          |
-   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | Repository secrets                        | Already set                      |
+   | Name                                            | Kind                                      | Value                                                  |
+   | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------ |
+   | `SANITY_PROJECT_ID`                             | Repository variable                       | `t88ezwbe`                                             |
+   | `SANITY_DATASET`                                | Repository variable                       | `production`                                           |
+   | `SANITY_STUDIO_URL`                             | Repository variable                       | `https://maestro.sanity.studio`                        |
+   | `SANITY_STUDIO_PREVIEW_URL`                     | Repository variable                       | The QA URL                                             |
+   | `SITE_DOMAIN`                                   | Environment variable (`qa`, `production`) | Each stage's domain, once chosen                       |
+   | `SANITY_AUTH_TOKEN`                             | Repository secret                         | The Deploy Studio token                                |
+   | `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` | Repository secret                         | `openssl rand -hex 64`, same value as in `studio/.env` |
+   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`    | Repository secrets                        | Already set                                            |
 
 3. **QA secret.** Store the Viewer token for the QA stage:
    `npx sst secret set SanityReadToken <token> --stage qa` (from `frontend/`).
@@ -115,6 +116,11 @@ build log if an image is missing on the site.
    - Headers: `Authorization: Bearer <token>` and
      `Accept: application/vnd.github+json`, where the token is a fine-grained
      GitHub token for `arcature/web` with _Contents: read and write_.
+5. **Deploy button (optional).** The Studio's **Deploy** tool can rebuild
+   production on demand. Add a webhook there with the same URL and token as
+   step 4; its GitHub event type defaults to `sanity-publish`. Set
+   `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` first, so the token is stored
+   encrypted.
 
 ### Launching
 
