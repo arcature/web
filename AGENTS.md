@@ -1,0 +1,149 @@
+# AGENTS.md
+
+`CLAUDE.md` is a symlink to this file.
+
+## Project overview
+
+The Maestro marketing site for Arcature: a one-page Astro 7 site with content in
+Sanity, deployed to AWS with SST. Production is fully static; QA renders on
+request so it can double as the draft preview for Sanity's Presentation tool.
+
+## Monorepo structure
+
+An npm workspace with one `package-lock.json` at the root. Run commands from the
+root.
+
+| Workspace    | Path        | Purpose                                                            |
+| ------------ | ----------- | ------------------------------------------------------------------ |
+| **frontend** | `frontend/` | Astro site, its SST config and the QA Lambda wrapper (port 4321)   |
+| **studio**   | `studio/`   | Sanity Studio v6, deployed to `arcature.sanity.studio` (port 3333) |
+
+`studio/vendor/` holds the vendored `sanity-plugin-webhooks-trigger` tarball.
+
+## Quick reference
+
+```bash
+npm run dev           # frontend + studio in parallel (run-p)
+npm run dev:frontend  # site only
+npm run dev:studio    # Studio only
+npm run build         # build the frontend (production mode unless SANITY_PREVIEW=true)
+npm run check         # astro check (frontend) + tsc --noEmit (studio)
+npm run lint          # ESLint in both workspaces
+npm run format:check  # Prettier
+npm run typegen       # regenerate frontend/src/sanity.types.ts from the schema + queries
+npm run deploy:studio # deploy the Studio
+```
+
+## Before opening a PR
+
+```bash
+npm run lint && npm run format:check && npm run check && npm run build
+```
+
+`.github/workflows/pr-checks.yml` runs the same, plus `npm test`, which has no
+script yet and fails.
+
+## Branches and deploys
+
+| Branch       | Workflow         | SST stage    | What it is                                                  |
+| ------------ | ---------------- | ------------ | ----------------------------------------------------------- |
+| `main`       | `qa.yml`         | `qa`         | Pages render on request in a Lambda; Presentation's preview |
+| `production` | `production.yml` | `production` | Fully prerendered, static files in S3 behind CloudFront     |
+
+Both call the reusable `deploy.yml` (build, then `npx sst deploy` from
+`frontend/`). Release by merging `main` into `production`. Production also
+rebuilds on a `repository_dispatch` of type `sanity-publish`, sent by the Sanity
+publish webhook or the Studio's **Deploy** tool. `deploy-studio.yml` deploys the
+Studio on pushes to `main` that touch `studio/`.
+
+GitHub variable and secret names are listed in the README's one-time setup.
+The QA stage's Sanity read token is an SST secret (`SanityReadToken`), not a
+GitHub one.
+
+## Architecture
+
+- **Content**: two singleton documents, `siteSettings` and `homePage` (fixed IDs,
+  can't be created, duplicated or deleted). `homePage.sections` is an array of 11
+  section object types, rendered by `frontend/src/pages/index.astro` with a
+  `switch` on `_type`.
+- **Schema**: `studio/schemaTypes/`. Field helpers (`cta`, `accent`, `alt`,
+  `linkList`, …) are in `fields.ts`; section types in `sections.ts`.
+- **Queries and types**: GROQ in `frontend/src/lib/queries.ts` (`defineQuery`).
+  Types come from Sanity TypeGen into `frontend/src/sanity.types.ts`. Never edit
+  that file; run `npm run typegen` after changing the schema or a query.
+  Queries `coalesce` lists to `[]` and components tolerate null fields, because
+  drafts can be half-filled.
+- **Data access**: `frontend/src/lib/content.ts` (`getSite`, `getHome`) picks the
+  published client or the draft client per request (`frontend/src/lib/sanity.ts`).
+- **Rendering modes**: one codebase, two builds. `SANITY_PREVIEW=true` makes an
+  inline integration in `frontend/astro.config.mjs` turn off prerendering for
+  every route and inject `/api/draft-mode/enable` and `/disable`
+  (`frontend/src/preview/`). Without it, everything is prerendered.
+- **Draft mode**: Presentation calls `/api/draft-mode/enable` with a signed
+  secret; the route sets an HMAC cookie derived from `SANITY_API_READ_TOKEN`.
+  Only then are drafts fetched, with stega encoding for click-to-edit.
+  `VisualEditing.astro` is imported only in preview builds, so its CSS never
+  reaches production.
+- **Stega**: values used as classes, conditions or URLs must not carry stega
+  characters. The filter in `frontend/src/lib/sanity.ts` excludes `href`,
+  `accent` and `imageSide`; add any new key of that kind there.
+- **Images**: `frontend/src/lib/images.ts` and `CmsImage.astro`. Prerendered
+  pages download and optimize Sanity images into `dist/client/_astro` (allowed
+  domain `cdn.sanity.io`), so production never loads from Sanity. On-request
+  pages use Sanity CDN URLs instead. `ShapedImage.astro` crops images into the
+  design's SVG shapes.
+- **Hosting**: `@astrojs/node` (standalone) for both builds.
+  `frontend/lambda/server/handler.mjs` wraps it with `serverless-http` for the QA
+  Lambda. It must stay in a folder named `server`: the adapter finds static files
+  by walking up to `server/` and looking for `../client`, and `sst.config.ts`
+  copies `dist/client` to `lambda/client`.
+
+## Environment
+
+- `frontend/.env` (see `.env.example`): `PUBLIC_SANITY_PROJECT_ID`,
+  `PUBLIC_SANITY_DATASET`, `PUBLIC_SANITY_STUDIO_URL`, `SANITY_PREVIEW`,
+  `SANITY_API_READ_TOKEN`. Declared in the `env.schema` of `astro.config.mjs`;
+  read them through `astro:env`.
+- `studio/.env` (see `.env.example`): `SANITY_STUDIO_*` plus `SANITY_AUTH_TOKEN`.
+- Sanity project `t88ezwbe`, dataset `production`.
+- `.env.github-vars` / `.env.github-secrets` (gitignored) hold the values for
+  `gh variable set -f` / `gh secret set -f`.
+
+## Code conventions
+
+- **Node**: 24, pinned in `.nvmrc` (also the QA Lambda runtime in `sst.config.ts`;
+  keep them in step).
+- **TypeScript** throughout, strict.
+- **ESLint** flat config per workspace: `typescript-eslint`, `eslint-plugin-astro`
+  and `simple-import-sort` in `frontend/`; `@sanity/eslint-config-studio` and
+  `simple-import-sort` in `studio/`.
+- **Prettier**: single quotes, 2-space indentation, `prettier-plugin-astro`
+  (`prettier.config.mjs`). No pre-commit hooks; CI enforces it.
+- **Tailwind CSS 4** for styling. Headings are title-cased by CSS, so content is
+  written in sentence case.
+
+## Gotchas
+
+- `astro-sst` doesn't build on Astro 7, which is why hosting uses the Node adapter
+  and a hand-written Lambda wrapper. Don't switch to `sst.aws.Astro` unless a
+  newer release supports Astro 7.
+- `astro check` excludes `sst.config.ts`; its types only exist after
+  `npx sst install` (run from `frontend/`).
+- If a Sanity image fails to download during a production build, Astro only
+  warns and ships a broken path. Check the build log.
+- `sanity schema validate` warns that the intro's `feature` array members share a
+  name with the `feature` section type. Renaming would affect stored content.
+
+## Key files
+
+| File                                 | What it does                                            |
+| ------------------------------------ | ------------------------------------------------------- |
+| `frontend/astro.config.mjs`          | Adapter, env schema, image domains, preview integration |
+| `frontend/sst.config.ts`             | SST stages: static site (production), Lambda (QA)       |
+| `frontend/lambda/server/handler.mjs` | QA Lambda entry                                         |
+| `frontend/src/lib/queries.ts`        | GROQ queries                                            |
+| `frontend/src/lib/sanity.ts`         | Sanity clients, stega filter, draft-mode cookie         |
+| `frontend/src/lib/images.ts`         | Build-time vs CDN image URLs                            |
+| `studio/sanity.config.ts`            | Studio: singletons, Presentation, Deploy tool, Vision   |
+| `studio/sanity.cli.ts`               | Studio host, deployment ID, TypeGen paths               |
+| `.github/workflows/deploy.yml`       | Reusable build + SST deploy                             |

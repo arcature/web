@@ -30,7 +30,7 @@ regenerate `frontend/src/sanity.types.ts`.
 
 ## Editing content
 
-Content is edited in Sanity Studio at <https://maestro.sanity.studio>. Editors
+Content is edited in Sanity Studio at <https://arcature.sanity.studio>. Editors
 sign in with a Sanity account; invite them under _sanity.io/manage → Members_.
 
 - **Home page → Sections** is an ordered list of blocks. Drag to reorder, remove
@@ -98,7 +98,7 @@ build log if an image is missing on the site.
    | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------ |
    | `SANITY_PROJECT_ID`                             | Repository variable                       | `t88ezwbe`                                             |
    | `SANITY_DATASET`                                | Repository variable                       | `production`                                           |
-   | `SANITY_STUDIO_URL`                             | Repository variable                       | `https://maestro.sanity.studio`                        |
+   | `SANITY_STUDIO_URL`                             | Repository variable                       | `https://arcature.sanity.studio`                       |
    | `SANITY_STUDIO_PREVIEW_URL`                     | Repository variable                       | The QA URL                                             |
    | `SITE_DOMAIN`                                   | Environment variable (`qa`, `production`) | Each stage's domain, once chosen                       |
    | `SANITY_AUTH_TOKEN`                             | Repository secret                         | The Deploy Studio token                                |

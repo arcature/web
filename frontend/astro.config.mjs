@@ -49,7 +49,7 @@ export default defineConfig({
       PUBLIC_SANITY_STUDIO_URL: envField.string({
         context: 'client',
         access: 'public',
-        default: 'https://maestro.sanity.studio',
+        default: 'https://arcature.sanity.studio',
       }),
       SANITY_API_READ_TOKEN: envField.string({
         context: 'server',

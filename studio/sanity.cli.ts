@@ -5,7 +5,7 @@ export default defineCliConfig({
     projectId: process.env.SANITY_STUDIO_PROJECT_ID,
     dataset: process.env.SANITY_STUDIO_DATASET || 'production',
   },
-  // Deployed to https://maestro.sanity.studio by `npm run deploy`.
+  // Deployed to https://arcature.sanity.studio by `npm run deploy`.
   studioHost: 'arcature',
   deployment: {
     appId: 'mmb07fuq45xo7nf7m12obkqt',
