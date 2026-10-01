@@ -6,7 +6,10 @@ export default defineCliConfig({
     dataset: process.env.SANITY_STUDIO_DATASET || 'production',
   },
   // Deployed to https://maestro.sanity.studio by `npm run deploy`.
-  studioHost: 'maestro',
+  studioHost: 'arcature',
+  deployment: {
+    appId: 'mmb07fuq45xo7nf7m12obkqt',
+  },
   typegen: {
     path: '../frontend/src/**/*.ts',
     schema: 'schema.json',
