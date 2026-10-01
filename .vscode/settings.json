@@ -1,0 +1,4 @@
+{
+  "eslint.validate": ["javascript", "javascriptreact", "astro", "typescript", "typescriptreact"],
+  "eslint.workingDirectories": [{ "pattern": "./frontend" }, { "pattern": "./studio" }]
+}

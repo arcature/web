@@ -89,11 +89,21 @@ build log if an image is missing on the site.
      credentials allowed.
    - *API → Tokens*: create a **Viewer** token for the QA stage.
    - Set `SANITY_STUDIO_PREVIEW_URL` in `studio/.env` to the QA URL, then
-     deploy the Studio with `npm run deploy:studio`.
+     deploy the Studio with `npm run deploy:studio`. After that, pushes to
+     `main` that touch `studio/` deploy it (`deploy-studio.yml`).
+   - *API → Tokens*: create a **Deploy Studio** token for GitHub Actions.
 2. **GitHub.** Under *Settings → Environments*, create `qa` and
-   `production`. Add repository variables `SANITY_PROJECT_ID`, `SANITY_DATASET`, and
-   `SANITY_STUDIO_URL`, plus a `SITE_DOMAIN` per environment once the domains
-   are chosen. `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` are reused.
+   `production`, then add (all workflows use these names):
+
+   | Name | Kind | Value |
+   | --- | --- | --- |
+   | `SANITY_PROJECT_ID` | Repository variable | `t88ezwbe` |
+   | `SANITY_DATASET` | Repository variable | `production` |
+   | `SANITY_STUDIO_URL` | Repository variable | `https://maestro.sanity.studio` |
+   | `SANITY_STUDIO_PREVIEW_URL` | Repository variable | The QA URL |
+   | `SITE_DOMAIN` | Environment variable (`qa`, `production`) | Each stage's domain, once chosen |
+   | `SANITY_AUTH_TOKEN` | Repository secret | The Deploy Studio token |
+   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | Repository secrets | Already set |
 3. **QA secret.** Store the Viewer token for the QA stage:
    `npx sst secret set SanityReadToken <token> --stage qa` (from `frontend/`).
 4. **Publish webhook.** In Sanity, *API → Webhooks → Create*:

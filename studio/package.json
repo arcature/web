@@ -10,7 +10,10 @@
     "dev": "sanity dev",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "typegen": "sanity schema extract --path schema.json --force && sanity typegen generate"
+    "typegen": "sanity schema extract --path schema.json --force && sanity typegen generate",
+    "check": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@sanity/vision": "^6.17.0",
@@ -20,8 +23,11 @@
     "styled-components": "^6.1.19"
   },
   "devDependencies": {
+    "@sanity/eslint-config-studio": "^7.0.0",
     "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
+    "eslint": "^10.11.0",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
     "typescript": "^6.0.3"
   }
 }

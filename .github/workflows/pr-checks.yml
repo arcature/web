@@ -1,0 +1,75 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, Format and Type Check
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+
+    env:
+      PUBLIC_SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
+      PUBLIC_SANITY_DATASET: ${{ vars.SANITY_DATASET }}
+      PUBLIC_SANITY_STUDIO_URL: ${{ vars.SANITY_STUDIO_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        id: setup-node
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - uses: actions/cache@v6
+        id: node-dep-cache
+        with:
+          path: '**/node_modules'
+          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('**/package*.json') }}
+
+      - name: Install dependencies
+        if: steps.node-dep-cache.outputs.cache-hit != 'true'
+        run: npm ci --include=dev
+
+      # The use of `if: !cancelled()` overrides the default condition
+      # of `if: success()` so later steps still run (and report) after
+      # an earlier one fails; only a cancelled run skips the rest.
+
+      - name: Lint
+        if: '!cancelled()'
+        run: npm run lint
+
+      - name: Check formatting
+        if: '!cancelled()'
+        run: npm run format:check
+
+      - name: Type check
+        if: '!cancelled()'
+        run: npm run check
+
+      # Includes querySizes.test.ts, the only check on GROQ query size before a
+      # deploy: production never measures, and development skips the API CDN
+      # whose limit it guards.
+      - name: Test
+        if: '!cancelled()'
+        run: npm test
+
+      # astro check does not exercise the adapter, the sitemap, or prerendering,
+      # so a build is the only thing here that catches those failing.
+      - name: Build
+        if: '!cancelled()'
+        run: npm run build
