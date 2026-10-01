@@ -10,14 +10,15 @@
     "studio"
   ],
   "scripts": {
-    "dev": "npm run dev -w frontend",
+    "dev": "run-p dev:*",
+    "dev:frontend": "npm run dev -w frontend",
+    "dev:studio": "npm run dev -w studio",
     "build": "npm run build -w frontend",
     "check": "npm run check --workspaces",
     "lint": "npm run lint --workspaces",
     "lint:fix": "npm run lint:fix --workspaces",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "studio": "npm run dev -w studio",
     "deploy:studio": "npm run deploy -w studio",
     "typegen": "npm run typegen -w studio"
   },
@@ -25,6 +26,7 @@
     "esbuild": true
   },
   "devDependencies": {
+    "npm-run-all2": "^9.0.3",
     "prettier": "3.9.9",
     "prettier-plugin-astro": "^1.1.0"
   }

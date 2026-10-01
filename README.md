@@ -14,8 +14,7 @@ root:
 cp frontend/.env.example frontend/.env   # set PUBLIC_SANITY_PROJECT_ID=t88ezwbe
 cp studio/.env.example studio/.env
 npm install
-npm run dev                   # site: http://localhost:4321
-npm run studio                # Studio: http://localhost:3333
+npm run dev                   # site: http://localhost:4321, Studio: http://localhost:3333
 ```
 
 Add a dependency to one package with `npm install <name> -w frontend` (or
