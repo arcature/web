@@ -2,10 +2,10 @@
 
 // Two stages, both built by .github/workflows/deploy.yml before `sst deploy`:
 //
-// - production: `npm run build` prerenders every page, so the site is plain
-//   files in S3 behind CloudFront, with no server.
-// - preview: `SANITY_PREVIEW=true npm run build` renders pages on request in a
-//   Lambda, so Sanity's Presentation tool can show drafts.
+// - production (production branch): `npm run build` prerenders every page, so
+//   the site is plain files in S3 behind CloudFront, with no server.
+// - qa (main branch): `SANITY_PREVIEW=true npm run build` renders pages on
+//   request in a Lambda, so Sanity's Presentation tool can show drafts.
 export default $config({
   app(input) {
     return {

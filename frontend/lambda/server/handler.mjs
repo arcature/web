@@ -1,4 +1,4 @@
-// Lambda entry for the preview stage (see sst.config.ts). Wraps the Astro Node
+// Lambda entry for the QA stage (see sst.config.ts). Wraps the Astro Node
 // adapter's standalone handler, which renders pages and serves dist/client.
 //
 // The adapter finds the static files by walking up to a folder named "server"

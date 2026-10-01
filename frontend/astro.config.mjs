@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import node from '@astrojs/node';
 
 // Production prerenders every page (published content, images downloaded into
-// the build). The preview stage renders every page on request so Sanity's
+// the build). The QA stage renders every page on request so Sanity's
 // Presentation tool can show drafts, and adds the draft-mode routes.
 const isPreview = process.env.SANITY_PREVIEW === 'true';
 

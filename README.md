@@ -60,17 +60,21 @@ Headings are rendered in title case by CSS, so type them in sentence case.
 
 ## How it's built and deployed
 
-`frontend/sst.config.ts` defines two stages on AWS, both deployed by
-`.github/workflows/deploy.yml`:
+`frontend/sst.config.ts` defines two stages on AWS. Each has a small workflow
+(`qa.yml`, `production.yml`) that calls the shared `deploy.yml`:
 
-| | Production | Preview |
+| | QA | Production |
 | --- | --- | --- |
-| Build | `npm run build`: every page prerendered with published content; Sanity images downloaded and optimized into `dist/client/_astro` | `SANITY_PREVIEW=true npm run build`: every page rendered on request |
-| Hosting | S3 + CloudFront (static files only, no server) | Lambda (`frontend/lambda/server/handler.mjs`) behind CloudFront |
-| Deploys | Push to `main`, and every **publish** in Sanity (webhook) | Push to `main` |
-| Indexed | Until launch, blocked by **Site settings → Hide from search engines** | Never (`noindex`, `no-store`) |
+| Branch | `main` | `production` |
+| Build | `SANITY_PREVIEW=true npm run build`: every page rendered on request | `npm run build`: every page prerendered with published content; Sanity images downloaded and optimized into `frontend/dist/client/_astro` |
+| Hosting | Lambda (`frontend/lambda/server/handler.mjs`) behind CloudFront | S3 + CloudFront (static files only, no server) |
+| Deploys | Push to `main` | Push to `production`, and every **publish** in Sanity (webhook) |
+| Indexed | Never (`noindex`, `no-store`) | Until launch, blocked by **Site settings → Hide from search engines** |
 
-The preview shows published content unless it's opened from Presentation, which
+To release, merge `main` into `production`.
+
+QA also serves as the draft preview for Presentation. It shows published content
+unless it's opened from Presentation, which
 calls `/api/draft-mode/enable` with a short-lived secret. That sets a cookie that
 switches the request to drafts, with click-to-edit overlays.
 
@@ -81,17 +85,17 @@ build log if an image is missing on the site.
 ### One-time setup
 
 1. **Sanity** (project `t88ezwbe`, dataset `production`). In *sanity.io/manage*:
-   - *API → CORS origins*: add `http://localhost:4321` and the preview URL, with
+   - *API → CORS origins*: add `http://localhost:4321` and the QA URL, with
      credentials allowed.
-   - *API → Tokens*: create a **Viewer** token for the preview stage.
-   - Set `SANITY_STUDIO_PREVIEW_URL` in `studio/.env` to the preview URL, then
+   - *API → Tokens*: create a **Viewer** token for the QA stage.
+   - Set `SANITY_STUDIO_PREVIEW_URL` in `studio/.env` to the QA URL, then
      deploy the Studio with `npm run deploy:studio`.
-2. **GitHub.** Under *Settings → Environments*, create `production` and
-   `preview`. Add repository variables `SANITY_PROJECT_ID`, `SANITY_DATASET`, and
+2. **GitHub.** Under *Settings → Environments*, create `qa` and
+   `production`. Add repository variables `SANITY_PROJECT_ID`, `SANITY_DATASET`, and
    `SANITY_STUDIO_URL`, plus a `SITE_DOMAIN` per environment once the domains
    are chosen. `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` are reused.
-3. **Preview secret.** Store the Viewer token for the preview stage:
-   `npx sst secret set SanityReadToken <token> --stage preview` (from `frontend/`).
+3. **QA secret.** Store the Viewer token for the QA stage:
+   `npx sst secret set SanityReadToken <token> --stage qa` (from `frontend/`).
 4. **Publish webhook.** In Sanity, *API → Webhooks → Create*:
    - URL: `https://api.github.com/repos/arcature/web/dispatches`, method `POST`
    - Filter: `_type in ["siteSettings", "homePage"]`; trigger on create, update,

@@ -1,0 +1,24 @@
+# Deploy the production branch to the production stage, a fully static build.
+name: Deploy production
+
+on:
+  push:
+    branches: ["production"]
+
+  # Sent by the Sanity webhook when content is published, so the static site
+  # picks up the new content.
+  repository_dispatch:
+    types: ["sanity-publish"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      stage: production
+      # repository_dispatch and workflow_dispatch run on the default branch
+      # (main), so always build the production branch.
+      ref: production
+    secrets: inherit
