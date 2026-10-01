@@ -1,16 +1,16 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/sections/Hero.astro';
-import Logos from '../components/sections/Logos.astro';
-import Intro from '../components/sections/Intro.astro';
-import Lifecycle from '../components/sections/Lifecycle.astro';
 import Banner from '../components/sections/Banner.astro';
 import Comparison from '../components/sections/Comparison.astro';
-import Teams from '../components/sections/Teams.astro';
-import Stats from '../components/sections/Stats.astro';
-import Statement from '../components/sections/Statement.astro';
-import Feature from '../components/sections/Feature.astro';
 import Cta from '../components/sections/Cta.astro';
+import Feature from '../components/sections/Feature.astro';
+import Hero from '../components/sections/Hero.astro';
+import Intro from '../components/sections/Intro.astro';
+import Lifecycle from '../components/sections/Lifecycle.astro';
+import Logos from '../components/sections/Logos.astro';
+import Statement from '../components/sections/Statement.astro';
+import Stats from '../components/sections/Stats.astro';
+import Teams from '../components/sections/Teams.astro';
+import Layout from '../layouts/Layout.astro';
 import { getHome, getSite } from '../lib/content';
 import { isDraftMode } from '../lib/sanity';
 
@@ -21,32 +21,30 @@ const endsWithCta = sections.at(-1)?._type === 'cta';
 ---
 
 <Layout site={site} footerOverlap={endsWithCta} draftMode={isDraftMode(Astro)}>
-  {
-    sections.map((section, index) => {
-      switch (section._type) {
-        case 'hero':
-          return <Hero {...section} isFirst={index === firstHero} />;
-        case 'logos':
-          return <Logos {...section} />;
-        case 'intro':
-          return <Intro {...section} />;
-        case 'lifecycle':
-          return <Lifecycle {...section} />;
-        case 'banner':
-          return <Banner {...section} />;
-        case 'comparison':
-          return <Comparison {...section} />;
-        case 'teams':
-          return <Teams {...section} />;
-        case 'stats':
-          return <Stats {...section} />;
-        case 'statement':
-          return <Statement {...section} />;
-        case 'feature':
-          return <Feature {...section} />;
-        case 'cta':
-          return <Cta {...section} />;
-      }
-    })
-  }
+  {sections.map((section, index) => {
+    switch (section._type) {
+      case 'hero':
+        return <Hero {...section} isFirst={index === firstHero} />;
+      case 'logos':
+        return <Logos {...section} />;
+      case 'intro':
+        return <Intro {...section} />;
+      case 'lifecycle':
+        return <Lifecycle {...section} />;
+      case 'banner':
+        return <Banner {...section} />;
+      case 'comparison':
+        return <Comparison {...section} />;
+      case 'teams':
+        return <Teams {...section} />;
+      case 'stats':
+        return <Stats {...section} />;
+      case 'statement':
+        return <Statement {...section} />;
+      case 'feature':
+        return <Feature {...section} />;
+      case 'cta':
+        return <Cta {...section} />;
+    }
+  })}
 </Layout>

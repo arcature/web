@@ -10,7 +10,8 @@ export const alt = (name = 'imageAlt', title = 'Image alt text') =>
     name,
     title,
     type: 'string',
-    description: 'Describe the image for screen reader users. Leave empty only if the image is purely decorative.',
+    description:
+      'Describe the image for screen reader users. Leave empty only if the image is purely decorative.',
   });
 
 export const text = (name: string, title: string, description?: string) =>
@@ -19,15 +20,29 @@ export const text = (name: string, title: string, description?: string) =>
 export const multiline = (name: string, title: string, description?: string) =>
   defineField({ name, title, description, type: 'text', rows: 3 });
 
-export const cta = (defaultLabel = 'Request demo', name = 'cta', title = 'Button') =>
+export const cta = (
+  defaultLabel = 'Request demo',
+  name = 'cta',
+  title = 'Button',
+) =>
   defineField({
     name,
     title,
     type: 'object',
     options: { collapsible: true, collapsed: false },
     fields: [
-      defineField({ name: 'label', title: 'Button label', type: 'string', initialValue: defaultLabel }),
-      defineField({ name: 'href', title: 'Button link', type: 'string', initialValue: '#demo' }),
+      defineField({
+        name: 'label',
+        title: 'Button label',
+        type: 'string',
+        initialValue: defaultLabel,
+      }),
+      defineField({
+        name: 'href',
+        title: 'Button link',
+        type: 'string',
+        initialValue: '#demo',
+      }),
     ],
   });
 
@@ -59,8 +74,18 @@ export const linkList = (name: string, title: string) =>
         type: 'object',
         name: 'link',
         fields: [
-          defineField({ name: 'label', title: 'Label', type: 'string', validation: (rule) => rule.required() }),
-          defineField({ name: 'href', title: 'Link', type: 'string', initialValue: '#' }),
+          defineField({
+            name: 'label',
+            title: 'Label',
+            type: 'string',
+            validation: (rule) => rule.required(),
+          }),
+          defineField({
+            name: 'href',
+            title: 'Link',
+            type: 'string',
+            initialValue: '#',
+          }),
         ],
         preview: { select: { title: 'label', subtitle: 'href' } },
       },
@@ -68,4 +93,9 @@ export const linkList = (name: string, title: string) =>
   });
 
 export const stringList = (name: string, title: string, itemTitle: string) =>
-  defineField({ name, title, type: 'array', of: [{ type: 'string', title: itemTitle }] });
+  defineField({
+    name,
+    title,
+    type: 'array',
+    of: [{ type: 'string', title: itemTitle }],
+  });

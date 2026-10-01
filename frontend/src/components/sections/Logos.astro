@@ -1,7 +1,7 @@
 ---
-import CmsImage from '../CmsImage.astro';
 import type { SectionOf } from '../../lib/content';
 import { resolveImage } from '../../lib/images';
+import CmsImage from '../CmsImage.astro';
 
 type Props = SectionOf<'logos'>;
 
@@ -12,15 +12,15 @@ const items = logos
 ---
 
 <section class="bg-paper" aria-label={label}>
-  <ul
-    class="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center gap-x-12 gap-y-8 px-4 py-9 md:justify-between md:px-16"
-  >
-    {
-      items.map((logo) => (
-        <li class="flex h-10 items-center">
-          <CmsImage image={logo.image!} alt={logo.name} class="h-auto max-h-10 w-auto max-w-[7.5rem]" />
-        </li>
-      ))
-    }
+  <ul class="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center gap-x-12 gap-y-8 px-4 py-9 md:justify-between md:px-16">
+    {items.map((logo) => (
+      <li class="flex h-10 items-center">
+        <CmsImage
+          image={logo.image!}
+          alt={logo.name}
+          class="h-auto max-h-10 w-auto max-w-[7.5rem]"
+        />
+      </li>
+    ))}
   </ul>
 </section>

@@ -6,7 +6,10 @@ export interface CmsImage {
   height: number;
 }
 
-type QueriedImage = { src: string | null; width: number | null; height: number | null } | null | undefined;
+type QueriedImage =
+  | { src: string | null; width: number | null; height: number | null }
+  | null
+  | undefined;
 
 /** Narrows a queried Sanity image to one that can be rendered, or undefined if it's missing. */
 export function resolveImage(image: QueriedImage): CmsImage | undefined {
@@ -32,7 +35,11 @@ export function sanityImageUrl(image: CmsImage, width: number): string {
  * optimize the image into the build output, so the public site never loads from
  * Sanity. Pages rendered on request (preview) use Sanity's CDN directly.
  */
-export async function imageUrl(image: CmsImage, width: number, isPrerendered: boolean): Promise<string> {
+export async function imageUrl(
+  image: CmsImage,
+  width: number,
+  isPrerendered: boolean,
+): Promise<string> {
   if (!isPrerendered) {
     return sanityImageUrl(image, width);
   }

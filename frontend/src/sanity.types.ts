@@ -62,9 +62,9 @@ export type CtaCta = {
 
 export type SanityImageAssetReference = {
   _ref: string;
-  _type: "reference";
+  _type: 'reference';
   _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
 };
 
 export type LogoImage = {
@@ -72,7 +72,7 @@ export type LogoImage = {
   media?: unknown; // Unable to locate the referenced type "image.media" in schema
   hotspot?: SanityImageHotspot;
   crop?: SanityImageCrop;
-  _type: "image";
+  _type: 'image';
 };
 
 export type ItemImage = {
@@ -80,18 +80,18 @@ export type ItemImage = {
   media?: unknown; // Unable to locate the referenced type "item.image.media" in schema
   hotspot?: SanityImageHotspot;
   crop?: SanityImageCrop;
-  _type: "image";
+  _type: 'image';
 };
 
 export type Cta = {
-  _type: "cta";
+  _type: 'cta';
   heading?: string;
   body?: string;
   cta?: CtaCta;
 };
 
 export type Feature = {
-  _type: "feature";
+  _type: 'feature';
   heading?: string;
   body?: string;
   cta?: FeatureCta;
@@ -100,14 +100,14 @@ export type Feature = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    _type: "image";
+    _type: 'image';
   };
   imageAlt?: string;
-  imageSide?: "right" | "left";
+  imageSide?: 'right' | 'left';
 };
 
 export type Statement = {
-  _type: "statement";
+  _type: 'statement';
   lineOne?: string;
   lineTwo?: string;
   image?: {
@@ -115,13 +115,13 @@ export type Statement = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    _type: "image";
+    _type: 'image';
   };
   imageAlt?: string;
 };
 
 export type Stats = {
-  _type: "stats";
+  _type: 'stats';
   heading?: string;
   body?: string;
   cta?: StatsCta;
@@ -129,39 +129,39 @@ export type Stats = {
     label?: string;
     value?: string;
     bar?: number;
-    _type: "stat";
+    _type: 'stat';
     _key: string;
   }>;
 };
 
 export type Teams = {
-  _type: "teams";
+  _type: 'teams';
   heading?: string;
-  accent?: "red" | "blue" | "olive" | "ink";
+  accent?: 'red' | 'blue' | 'olive' | 'ink';
   items?: Array<{
     title?: string;
     body?: string;
-    _type: "item";
+    _type: 'item';
     _key: string;
   }>;
 };
 
 export type Comparison = {
-  _type: "comparison";
+  _type: 'comparison';
   before?: Before;
   after?: After;
 };
 
 export type Banner = {
-  _type: "banner";
+  _type: 'banner';
   heading?: string;
   body?: string;
   cta?: BannerCta;
-  accent?: "red" | "blue" | "olive" | "ink";
+  accent?: 'red' | 'blue' | 'olive' | 'ink';
 };
 
 export type Lifecycle = {
-  _type: "lifecycle";
+  _type: 'lifecycle';
   heading?: string;
   cta?: LifecycleCta;
   items?: Array<{
@@ -171,37 +171,37 @@ export type Lifecycle = {
     body?: string;
     image?: ItemImage;
     imageAlt?: string;
-    _type: "item";
+    _type: 'item';
     _key: string;
   }>;
 };
 
 export type Intro = {
-  _type: "intro";
+  _type: 'intro';
   eyebrow?: string;
   body?: string;
   cta?: IntroCta;
   features?: Array<{
     title?: string;
     body?: string;
-    _type: "feature";
+    _type: 'feature';
     _key: string;
   }>;
 };
 
 export type Logos = {
-  _type: "logos";
+  _type: 'logos';
   label?: string;
   logos?: Array<{
     name?: string;
     image?: LogoImage;
-    _type: "logo";
+    _type: 'logo';
     _key: string;
   }>;
 };
 
 export type Hero = {
-  _type: "hero";
+  _type: 'hero';
   heading?: string;
   body?: string;
   cta?: HeroCta;
@@ -210,14 +210,14 @@ export type Hero = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    _type: "image";
+    _type: 'image';
   };
   imageAlt?: string;
 };
 
 export type SiteSettings = {
   _id: string;
-  _type: "siteSettings";
+  _type: 'siteSettings';
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
@@ -227,7 +227,7 @@ export type SiteSettings = {
   navigation?: Array<{
     label?: string;
     href?: string;
-    _type: "link";
+    _type: 'link';
     _key: string;
   }>;
   login?: {
@@ -245,12 +245,12 @@ export type SiteSettings = {
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
-      _type: "image";
+      _type: 'image';
     };
     social?: Array<{
       label?: string;
       href?: string;
-      _type: "link";
+      _type: 'link';
       _key: string;
     }>;
     copyright?: string;
@@ -262,7 +262,7 @@ export type SiteSettings = {
 };
 
 export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
+  _type: 'sanity.imageCrop';
   top?: number;
   bottom?: number;
   left?: number;
@@ -270,7 +270,7 @@ export type SanityImageCrop = {
 };
 
 export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
+  _type: 'sanity.imageHotspot';
   x?: number;
   y?: number;
   height?: number;
@@ -279,7 +279,7 @@ export type SanityImageHotspot = {
 
 export type HomePage = {
   _id: string;
-  _type: "homePage";
+  _type: 'homePage';
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
@@ -321,7 +321,7 @@ export type HomePage = {
 };
 
 export type SanityImagePaletteSwatch = {
-  _type: "sanity.imagePaletteSwatch";
+  _type: 'sanity.imagePaletteSwatch';
   background?: string;
   foreground?: string;
   population?: number;
@@ -329,7 +329,7 @@ export type SanityImagePaletteSwatch = {
 };
 
 export type SanityImagePalette = {
-  _type: "sanity.imagePalette";
+  _type: 'sanity.imagePalette';
   darkMuted?: SanityImagePaletteSwatch;
   lightVibrant?: SanityImagePaletteSwatch;
   darkVibrant?: SanityImagePaletteSwatch;
@@ -340,14 +340,14 @@ export type SanityImagePalette = {
 };
 
 export type SanityImageDimensions = {
-  _type: "sanity.imageDimensions";
+  _type: 'sanity.imageDimensions';
   height?: number;
   width?: number;
   aspectRatio?: number;
 };
 
 export type SanityImageMetadata = {
-  _type: "sanity.imageMetadata";
+  _type: 'sanity.imageMetadata';
   location?: Geopoint;
   dimensions?: SanityImageDimensions;
   palette?: SanityImagePalette;
@@ -360,7 +360,7 @@ export type SanityImageMetadata = {
 
 export type SanityFileAsset = {
   _id: string;
-  _type: "sanity.fileAsset";
+  _type: 'sanity.fileAsset';
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
@@ -381,7 +381,7 @@ export type SanityFileAsset = {
 };
 
 export type SanityAssetSourceData = {
-  _type: "sanity.assetSourceData";
+  _type: 'sanity.assetSourceData';
   name?: string;
   id?: string;
   url?: string;
@@ -389,7 +389,7 @@ export type SanityAssetSourceData = {
 
 export type SanityImageAsset = {
   _id: string;
-  _type: "sanity.imageAsset";
+  _type: 'sanity.imageAsset';
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
@@ -411,14 +411,14 @@ export type SanityImageAsset = {
 };
 
 export type Geopoint = {
-  _type: "geopoint";
+  _type: 'geopoint';
   lat?: number;
   lng?: number;
   alt?: number;
 };
 
 export type Slug = {
-  _type: "slug";
+  _type: 'slug';
   current?: string;
   source?: string;
 };
@@ -512,18 +512,18 @@ export type HomeQueryResult = {
     | Array<
         | {
             _key: string;
-            _type: "banner";
+            _type: 'banner';
             heading: string | null;
             body: string | null;
             cta: {
               label: string | null;
               href: string | null;
             } | null;
-            accent: "blue" | "ink" | "olive" | "red" | null;
+            accent: 'blue' | 'ink' | 'olive' | 'red' | null;
           }
         | {
             _key: string;
-            _type: "comparison";
+            _type: 'comparison';
             before: {
               title: string | null;
               items: Array<string> | Array<never>;
@@ -535,7 +535,7 @@ export type HomeQueryResult = {
           }
         | {
             _key: string;
-            _type: "cta";
+            _type: 'cta';
             heading: string | null;
             body: string | null;
             cta: {
@@ -545,24 +545,7 @@ export type HomeQueryResult = {
           }
         | {
             _key: string;
-            _type: "feature";
-            heading: string | null;
-            body: string | null;
-            cta: {
-              label: string | null;
-              href: string | null;
-            } | null;
-            image: {
-              src: string | null;
-              width: number | null;
-              height: number | null;
-            } | null;
-            imageAlt: string | null;
-            imageSide: "left" | "right" | null;
-          }
-        | {
-            _key: string;
-            _type: "hero";
+            _type: 'feature';
             heading: string | null;
             body: string | null;
             cta: {
@@ -575,10 +558,27 @@ export type HomeQueryResult = {
               height: number | null;
             } | null;
             imageAlt: string | null;
+            imageSide: 'left' | 'right' | null;
           }
         | {
             _key: string;
-            _type: "intro";
+            _type: 'hero';
+            heading: string | null;
+            body: string | null;
+            cta: {
+              label: string | null;
+              href: string | null;
+            } | null;
+            image: {
+              src: string | null;
+              width: number | null;
+              height: number | null;
+            } | null;
+            imageAlt: string | null;
+          }
+        | {
+            _key: string;
+            _type: 'intro';
             eyebrow: string | null;
             body: string | null;
             cta: {
@@ -595,7 +595,7 @@ export type HomeQueryResult = {
           }
         | {
             _key: string;
-            _type: "lifecycle";
+            _type: 'lifecycle';
             heading: string | null;
             cta: {
               label: string | null;
@@ -619,7 +619,7 @@ export type HomeQueryResult = {
           }
         | {
             _key: string;
-            _type: "logos";
+            _type: 'logos';
             label: string | null;
             logos:
               | Array<{
@@ -635,7 +635,7 @@ export type HomeQueryResult = {
           }
         | {
             _key: string;
-            _type: "statement";
+            _type: 'statement';
             lineOne: string | null;
             lineTwo: string | null;
             image: {
@@ -647,7 +647,7 @@ export type HomeQueryResult = {
           }
         | {
             _key: string;
-            _type: "stats";
+            _type: 'stats';
             heading: string | null;
             body: string | null;
             cta: {
@@ -665,9 +665,9 @@ export type HomeQueryResult = {
           }
         | {
             _key: string;
-            _type: "teams";
+            _type: 'teams';
             heading: string | null;
-            accent: "blue" | "ink" | "olive" | "red" | null;
+            accent: 'blue' | 'ink' | 'olive' | 'red' | null;
             items:
               | Array<{
                   _key: string;
@@ -687,6 +687,6 @@ declare global {
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too
-declare module "@sanity/client" {
+declare module '@sanity/client' {
   interface SanityQueries extends globalThis.SanityQueries {}
 }

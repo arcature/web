@@ -1,7 +1,7 @@
 ---
-import Button from '../Button.astro';
-import { accentCycle, accentBg } from '../../lib/accent';
+import { accentBg, accentCycle } from '../../lib/accent';
 import type { SectionOf } from '../../lib/content';
+import Button from '../Button.astro';
 
 type Props = SectionOf<'intro'>;
 
@@ -13,7 +13,9 @@ const fills = [...accentCycle, 'red' as const];
 <section class="bg-mist">
   <div class="grid border-b border-line md:grid-cols-4">
     <div class="border-line px-4 pt-10 md:border-r md:px-16 md:pt-20 md:pb-10">
-      <h2 class="text-xl leading-[1.1] whitespace-pre-line uppercase">{eyebrow}</h2>
+      <h2 class="text-xl leading-[1.1] whitespace-pre-line uppercase">
+        {eyebrow}
+      </h2>
     </div>
     <div class="px-4 pt-6 pb-12 md:col-span-3 md:min-h-[496px] md:px-8 md:pt-20">
       <p class="text-statement max-w-[1016px]">{body}</p>
@@ -21,28 +23,30 @@ const fills = [...accentCycle, 'red' as const];
     </div>
   </div>
 
-  {
-    features.length > 0 && (
-      <ul class="grid sm:grid-cols-2 md:grid-cols-4">
-        {features.map((feature, index) => (
-          <li
+  {features.length > 0 && (
+    <ul class="grid sm:grid-cols-2 md:grid-cols-4">
+      {features.map((feature, index) => (
+        <li
+          class:list={[
+            'group relative isolate flex min-h-40 md:min-h-[229px] flex-col justify-between gap-10 overflow-hidden border-b border-line px-4 pt-8 pb-8 sm:border-r md:border-b-0',
+            index === 0 ? 'md:px-16' : 'md:px-8',
+          ]}
+        >
+          <span
+            aria-hidden="true"
             class:list={[
-              'group relative isolate flex min-h-40 md:min-h-[229px] flex-col justify-between gap-10 overflow-hidden border-b border-line px-4 pt-8 pb-8 sm:border-r md:border-b-0',
-              index === 0 ? 'md:px-16' : 'md:px-8',
+              '-z-10 absolute inset-y-0 left-0 w-0 transition-[width] duration-500 ease-out group-hover:w-full',
+              accentBg[fills[index % fills.length]],
             ]}
-          >
-            <span
-              aria-hidden="true"
-              class:list={[
-                '-z-10 absolute inset-y-0 left-0 w-0 transition-[width] duration-500 ease-out group-hover:w-full',
-                accentBg[fills[index % fills.length]],
-              ]}
-            />
-            <h3 class="text-xl leading-[1.1] uppercase transition-colors group-hover:text-paper">{feature.title}</h3>
-            <p class="max-w-[248px] text-base leading-[1.1] transition-colors group-hover:text-paper">{feature.body}</p>
-          </li>
-        ))}
-      </ul>
-    )
-  }
+          />
+          <h3 class="text-xl leading-[1.1] uppercase transition-colors group-hover:text-paper">
+            {feature.title}
+          </h3>
+          <p class="max-w-[248px] text-base leading-[1.1] transition-colors group-hover:text-paper">
+            {feature.body}
+          </p>
+        </li>
+      ))}
+    </ul>
+  )}
 </section>

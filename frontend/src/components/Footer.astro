@@ -1,8 +1,8 @@
 ---
 import Wordmark from '../assets/brand/wordmark.svg';
-import ShapedImage from './ShapedImage.astro';
 import type { Site } from '../lib/content';
 import { resolveImage } from '../lib/images';
+import ShapedImage from './ShapedImage.astro';
 
 interface Props {
   site: Site;
@@ -46,28 +46,30 @@ const SHAPE =
       <div class="flex gap-16">
         <nav aria-label="Footer">
           <ul class="flex flex-col">
-            {
-              site.navigation.map((item) => (
-                <li>
-                  <a href={item.href} class="label inline-flex min-h-11 items-center hover:underline md:min-h-[33px]">
-                    {item.label}
-                  </a>
-                </li>
-              ))
-            }
+            {site.navigation.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="label inline-flex min-h-11 items-center hover:underline md:min-h-[33px]"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
         <nav aria-label="Social">
           <ul class="flex flex-col">
-            {
-              (footer?.social ?? []).map((item) => (
-                <li>
-                  <a href={item.href} class="label inline-flex min-h-11 items-center hover:underline md:min-h-[33px]">
-                    {item.label}
-                  </a>
-                </li>
-              ))
-            }
+            {(footer?.social ?? []).map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="label inline-flex min-h-11 items-center hover:underline md:min-h-[33px]"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>
@@ -77,13 +79,14 @@ const SHAPE =
 
     <div class="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-between">
       <p class="label">{footer?.copyright}</p>
-      {
-        footer?.credit?.label && (
-          <a href={footer.credit.href ?? undefined} class="label inline-flex min-h-11 items-center hover:underline sm:min-h-0">
-            {footer.credit.label}
-          </a>
-        )
-      }
+      {footer?.credit?.label && (
+        <a
+          href={footer.credit.href ?? undefined}
+          class="label inline-flex min-h-11 items-center hover:underline sm:min-h-0"
+        >
+          {footer.credit.label}
+        </a>
+      )}
     </div>
   </div>
 </footer>

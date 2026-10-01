@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
+
 import { cta, image, linkList, multiline, text } from './fields';
 import { sectionTypes } from './sections';
 
@@ -7,12 +8,18 @@ export const siteSettings = defineType({
   title: 'Site settings',
   type: 'document',
   fields: [
-    defineField({ name: 'title', title: 'Site title', type: 'string', initialValue: 'Maestro' }),
+    defineField({
+      name: 'title',
+      title: 'Site title',
+      type: 'string',
+      initialValue: 'Maestro',
+    }),
     multiline('description', 'Meta description'),
     defineField({
       name: 'hideFromSearchEngines',
       title: 'Hide from search engines',
-      description: 'Keep checked until launch. Unchecking lets Google and others index the site.',
+      description:
+        'Keep checked until launch. Unchecking lets Google and others index the site.',
       type: 'boolean',
       initialValue: true,
     }),
@@ -25,7 +32,11 @@ export const siteSettings = defineType({
       type: 'object',
       fields: [
         text('tagline', 'Tagline'),
-        image('image', 'Background image', 'Shown inside the mountain shape behind the tagline.'),
+        image(
+          'image',
+          'Background image',
+          'Shown inside the mountain shape behind the tagline.',
+        ),
         linkList('social', 'Social links'),
         text('copyright', 'Copyright line'),
         defineField({
@@ -48,9 +59,12 @@ export const homePage = defineType({
     defineField({
       name: 'sections',
       title: 'Sections',
-      description: 'Drag to reorder. Remove a section to hide it from the page.',
+      description:
+        'Drag to reorder. Remove a section to hide it from the page.',
       type: 'array',
-      of: sectionTypes.map((section) => defineArrayMember({ type: section.name })),
+      of: sectionTypes.map((section) =>
+        defineArrayMember({ type: section.name }),
+      ),
     }),
   ],
   preview: { prepare: () => ({ title: 'Home page' }) },

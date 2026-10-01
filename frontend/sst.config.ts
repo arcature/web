@@ -27,8 +27,14 @@ export default $config({
         router: { instance: router },
         assets: {
           fileOptions: [
-            { files: '_astro/**', cacheControl: 'public, max-age=31536000, immutable' },
-            { files: ['**', '!_astro/**'], cacheControl: 'public, max-age=0, must-revalidate' },
+            {
+              files: '_astro/**',
+              cacheControl: 'public, max-age=31536000, immutable',
+            },
+            {
+              files: ['**', '!_astro/**'],
+              cacheControl: 'public, max-age=0, must-revalidate',
+            },
           ],
         },
       });

@@ -1,7 +1,12 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+
 import { createClient } from '@sanity/client';
 import type { AstroCookies } from 'astro';
-import { PUBLIC_SANITY_DATASET, PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_STUDIO_URL } from 'astro:env/client';
+import {
+  PUBLIC_SANITY_DATASET,
+  PUBLIC_SANITY_PROJECT_ID,
+  PUBLIC_SANITY_STUDIO_URL,
+} from 'astro:env/client';
 import { SANITY_API_READ_TOKEN } from 'astro:env/server';
 
 export const client = createClient({
@@ -39,7 +44,9 @@ export const DRAFT_MODE_COOKIE = 'sanity-draft-mode';
 
 export function draftModeCookieValue(): string | undefined {
   return SANITY_API_READ_TOKEN
-    ? createHmac('sha256', SANITY_API_READ_TOKEN).update(DRAFT_MODE_COOKIE).digest('hex')
+    ? createHmac('sha256', SANITY_API_READ_TOKEN)
+        .update(DRAFT_MODE_COOKIE)
+        .digest('hex')
     : undefined;
 }
 
@@ -48,7 +55,10 @@ export interface RequestContext {
   isPrerendered: boolean;
 }
 
-export function isDraftMode({ cookies, isPrerendered }: RequestContext): boolean {
+export function isDraftMode({
+  cookies,
+  isPrerendered,
+}: RequestContext): boolean {
   if (isPrerendered) {
     return false;
   }

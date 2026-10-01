@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
+
 import { accent, alt, cta, image, multiline, stringList, text } from './fields';
 
 const hero = defineType({
@@ -12,7 +13,10 @@ const hero = defineType({
     image('image', 'Image', 'Cropped into the stepped shape on the right.'),
     alt(),
   ],
-  preview: { select: { title: 'heading', media: 'image' }, prepare: ({ title, media }) => ({ title: `Hero — ${title ?? ''}`, media }) },
+  preview: {
+    select: { title: 'heading', media: 'image' },
+    prepare: ({ title, media }) => ({ title: `Hero — ${title ?? ''}`, media }),
+  },
 });
 
 const logos = defineType({
@@ -51,7 +55,9 @@ const logos = defineType({
   ],
   preview: {
     select: { logos: 'logos' },
-    prepare: ({ logos }) => ({ title: `Logo strip (${Array.isArray(logos) ? logos.length : 0})` }),
+    prepare: ({ logos }) => ({
+      title: `Logo strip (${Array.isArray(logos) ? logos.length : 0})`,
+    }),
   },
 });
 
@@ -77,7 +83,10 @@ const intro = defineType({
       ],
     }),
   ],
-  preview: { select: { title: 'eyebrow' }, prepare: ({ title }) => ({ title: `Intro — ${title ?? ''}` }) },
+  preview: {
+    select: { title: 'eyebrow' },
+    prepare: ({ title }) => ({ title: `Intro — ${title ?? ''}` }),
+  },
 });
 
 const lifecycle = defineType({
@@ -100,7 +109,11 @@ const lifecycle = defineType({
             stringList('tags', 'Tags', 'Tag'),
             text('lead', 'Lead sentence'),
             multiline('body', 'Body'),
-            image('image', 'Image', 'Optional. Falls back to the first item’s image.'),
+            image(
+              'image',
+              'Image',
+              'Optional. Falls back to the first item’s image.',
+            ),
             alt(),
           ],
           preview: { select: { title: 'title', media: 'image' } },
@@ -108,15 +121,26 @@ const lifecycle = defineType({
       ],
     }),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: `Accordion — ${title ?? ''}` }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: `Accordion — ${title ?? ''}` }),
+  },
 });
 
 const banner = defineType({
   name: 'banner',
   title: 'Split banner',
   type: 'object',
-  fields: [text('heading', 'Heading'), multiline('body', 'Body'), cta(), accent('blue')],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: `Banner — ${title ?? ''}` }) },
+  fields: [
+    text('heading', 'Heading'),
+    multiline('body', 'Body'),
+    cta(),
+    accent('blue'),
+  ],
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: `Banner — ${title ?? ''}` }),
+  },
 });
 
 const comparisonColumn = (name: string, title: string) =>
@@ -131,10 +155,15 @@ const comparison = defineType({
   name: 'comparison',
   title: 'Comparison',
   type: 'object',
-  fields: [comparisonColumn('before', 'Before (✕ list)'), comparisonColumn('after', 'After (○ list)')],
+  fields: [
+    comparisonColumn('before', 'Before (✕ list)'),
+    comparisonColumn('after', 'After (○ list)'),
+  ],
   preview: {
     select: { before: 'before.title', after: 'after.title' },
-    prepare: ({ before, after }) => ({ title: `Comparison — ${before ?? ''} vs ${after ?? ''}` }),
+    prepare: ({ before, after }) => ({
+      title: `Comparison — ${before ?? ''} vs ${after ?? ''}`,
+    }),
   },
 });
 
@@ -159,7 +188,10 @@ const teams = defineType({
       ],
     }),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: `Grid — ${title ?? ''}` }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: `Grid — ${title ?? ''}` }),
+  },
 });
 
 const stats = defineType({
@@ -192,13 +224,18 @@ const stats = defineType({
           ],
           preview: {
             select: { value: 'value', label: 'label' },
-            prepare: ({ value, label }) => ({ title: `${value ?? ''} — ${label ?? ''}` }),
+            prepare: ({ value, label }) => ({
+              title: `${value ?? ''} — ${label ?? ''}`,
+            }),
           },
         }),
       ],
     }),
   ],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: `Stats — ${title ?? ''}` }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: `Stats — ${title ?? ''}` }),
+  },
 });
 
 const statement = defineType({
@@ -213,7 +250,10 @@ const statement = defineType({
   ],
   preview: {
     select: { title: 'lineOne', media: 'image' },
-    prepare: ({ title, media }) => ({ title: `Statement — ${title ?? ''}`, media }),
+    prepare: ({ title, media }) => ({
+      title: `Statement — ${title ?? ''}`,
+      media,
+    }),
   },
 });
 
@@ -244,7 +284,10 @@ const feature = defineType({
   ],
   preview: {
     select: { title: 'heading', media: 'image' },
-    prepare: ({ title, media }) => ({ title: `Feature — ${title ?? ''}`, media }),
+    prepare: ({ title, media }) => ({
+      title: `Feature — ${title ?? ''}`,
+      media,
+    }),
   },
 });
 
@@ -253,7 +296,10 @@ const callToAction = defineType({
   title: 'Call to action',
   type: 'object',
   fields: [text('heading', 'Heading'), multiline('body', 'Body'), cta()],
-  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: `CTA — ${title ?? ''}` }) },
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: `CTA — ${title ?? ''}` }),
+  },
 });
 
 export const sectionTypes = [

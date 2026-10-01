@@ -1,7 +1,7 @@
 ---
 import Logo from '../assets/brand/logo.svg';
-import Button from './Button.astro';
 import type { Site } from '../lib/content';
+import Button from './Button.astro';
 
 interface Props {
   site: Site;
@@ -19,15 +19,16 @@ const { site } = Astro.props;
 
     <nav aria-label="Main" class="hidden lg:block">
       <ul class="flex gap-2">
-        {
-          site.navigation.map((item) => (
-            <li>
-              <a href={item.href} class="label inline-flex min-h-11 items-center px-3 hover:underline">
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
+        {site.navigation.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="label inline-flex min-h-11 items-center px-3 hover:underline"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
 
@@ -44,25 +45,34 @@ const { site } = Astro.props;
       data-menu-toggle
     >
       <span data-menu-label>Menu</span>
-      <svg aria-hidden="true" viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 16 16"
+        class="size-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+      >
         <path d="M1 4h14M1 8h14M1 12h14" data-menu-open></path>
         <path d="M3 3l10 10M13 3L3 13" data-menu-close class="hidden"></path>
       </svg>
     </button>
   </div>
 
-  <div id="mobile-menu" class="border-t border-line-dark px-4 pb-6 lg:hidden" hidden>
+  <div
+    id="mobile-menu"
+    class="border-t border-line-dark px-4 pb-6 lg:hidden"
+    hidden
+  >
     <nav aria-label="Main">
       <ul class="flex flex-col">
-        {
-          site.navigation.map((item) => (
-            <li class="border-b border-line-dark">
-              <a href={item.href} class="label flex min-h-12 items-center">
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
+        {site.navigation.map((item) => (
+          <li class="border-b border-line-dark">
+            <a href={item.href} class="label flex min-h-12 items-center">
+              {item.label}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
     <div class="mt-6 flex flex-wrap gap-3">
@@ -73,15 +83,20 @@ const { site } = Astro.props;
 </header>
 
 <script>
-  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const toggle =
+    document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = document.getElementById('mobile-menu');
 
   if (toggle && menu) {
     const setOpen = (open: boolean) => {
       toggle.setAttribute('aria-expanded', String(open));
       menu.hidden = !open;
-      toggle.querySelector('[data-menu-open]')?.classList.toggle('hidden', open);
-      toggle.querySelector('[data-menu-close]')?.classList.toggle('hidden', !open);
+      toggle
+        .querySelector('[data-menu-open]')
+        ?.classList.toggle('hidden', open);
+      toggle
+        .querySelector('[data-menu-close]')
+        ?.classList.toggle('hidden', !open);
       const label = toggle.querySelector('[data-menu-label]');
 
       if (label) {

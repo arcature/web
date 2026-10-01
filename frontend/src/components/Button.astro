@@ -16,17 +16,15 @@ const variants = {
 };
 ---
 
-{
-  label && (
-    <a
-      href={href}
-      class:list={[
-        'label inline-flex min-h-11 items-center justify-center px-4 whitespace-nowrap transition-colors',
-        variants[variant],
-        className,
-      ]}
-    >
-      {label}
-    </a>
-  )
-}
+{label && (
+  <a
+    href={href}
+    class:list={[
+      'label inline-flex min-h-11 items-center justify-center px-4 whitespace-nowrap transition-colors',
+      variants[variant],
+      className,
+    ]}
+  >
+    {label}
+  </a>
+)}

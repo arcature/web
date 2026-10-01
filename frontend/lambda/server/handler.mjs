@@ -5,6 +5,7 @@
 // and looking for "../client", so this file lives in lambda/server/ and
 // sst.config.ts copies dist/client to lambda/client.
 import serverless from 'serverless-http';
+
 import { handler as astro } from '../../dist/server/entry.mjs';
 
 export const handler = serverless(

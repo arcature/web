@@ -4,7 +4,8 @@ import { defineQuery } from 'groq';
 const image = `{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }`;
 const button = `{ label, href }`;
 
-export const siteQuery = defineQuery(`*[_type == "siteSettings" && _id == "siteSettings"][0]{
+export const siteQuery =
+  defineQuery(`*[_type == "siteSettings" && _id == "siteSettings"][0]{
   title,
   description,
   hideFromSearchEngines,
@@ -21,7 +22,8 @@ export const siteQuery = defineQuery(`*[_type == "siteSettings" && _id == "siteS
 }`);
 
 // Lists fall back to [] so components can map over them even on half-finished drafts.
-export const homeQuery = defineQuery(`*[_type == "homePage" && _id == "homePage"][0]{
+export const homeQuery =
+  defineQuery(`*[_type == "homePage" && _id == "homePage"][0]{
   "sections": coalesce(sections[]{
     _key,
     _type,

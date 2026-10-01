@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+
 import { getSite } from '../lib/content';
 
 export const GET: APIRoute = async (context) => {

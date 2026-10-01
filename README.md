@@ -32,7 +32,7 @@ regenerate `frontend/src/sanity.types.ts`.
 ## Editing content
 
 Content is edited in Sanity Studio at <https://maestro.sanity.studio>. Editors
-sign in with a Sanity account; invite them under *sanity.io/manage → Members*.
+sign in with a Sanity account; invite them under _sanity.io/manage → Members_.
 
 - **Home page → Sections** is an ordered list of blocks. Drag to reorder, remove
   a block to hide it, and use **Add item** to insert any section type (you can
@@ -44,32 +44,32 @@ sign in with a Sanity account; invite them under *sanity.io/manage → Members*.
 
 Headings are rendered in title case by CSS, so type them in sentence case.
 
-| Block | Figma section |
-| --- | --- |
-| Hero | "Simplify everything behind the scenes" |
-| Logo strip | Client logos |
-| Intro with feature cards | "One platform. Every part of your organization." |
-| Numbered accordion | "Built for the full patron lifecycle" |
-| Split banner | "Leave the complexity behind" |
-| Comparison | Legacy systems vs Maestro |
-| Numbered grid | "One platform, built for every team" |
-| Stats with bars | "How unified operations perform" |
-| Statement with shaped image | "Built for the way…" |
-| Feature (text + image) | The four alternating text/image rows |
-| Call to action | "Your organization is ready…" |
+| Block                       | Figma section                                    |
+| --------------------------- | ------------------------------------------------ |
+| Hero                        | "Simplify everything behind the scenes"          |
+| Logo strip                  | Client logos                                     |
+| Intro with feature cards    | "One platform. Every part of your organization." |
+| Numbered accordion          | "Built for the full patron lifecycle"            |
+| Split banner                | "Leave the complexity behind"                    |
+| Comparison                  | Legacy systems vs Maestro                        |
+| Numbered grid               | "One platform, built for every team"             |
+| Stats with bars             | "How unified operations perform"                 |
+| Statement with shaped image | "Built for the way…"                             |
+| Feature (text + image)      | The four alternating text/image rows             |
+| Call to action              | "Your organization is ready…"                    |
 
 ## How it's built and deployed
 
 `frontend/sst.config.ts` defines two stages on AWS. Each has a small workflow
 (`qa.yml`, `production.yml`) that calls the shared `deploy.yml`:
 
-| | QA | Production |
-| --- | --- | --- |
-| Branch | `main` | `production` |
-| Build | `SANITY_PREVIEW=true npm run build`: every page rendered on request | `npm run build`: every page prerendered with published content; Sanity images downloaded and optimized into `frontend/dist/client/_astro` |
-| Hosting | Lambda (`frontend/lambda/server/handler.mjs`) behind CloudFront | S3 + CloudFront (static files only, no server) |
-| Deploys | Push to `main` | Push to `production`, and every **publish** in Sanity (webhook) |
-| Indexed | Never (`noindex`, `no-store`) | Until launch, blocked by **Site settings → Hide from search engines** |
+|         | QA                                                                  | Production                                                                                                                                |
+| ------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Branch  | `main`                                                              | `production`                                                                                                                              |
+| Build   | `SANITY_PREVIEW=true npm run build`: every page rendered on request | `npm run build`: every page prerendered with published content; Sanity images downloaded and optimized into `frontend/dist/client/_astro` |
+| Hosting | Lambda (`frontend/lambda/server/handler.mjs`) behind CloudFront     | S3 + CloudFront (static files only, no server)                                                                                            |
+| Deploys | Push to `main`                                                      | Push to `production`, and every **publish** in Sanity (webhook)                                                                           |
+| Indexed | Never (`noindex`, `no-store`)                                       | Until launch, blocked by **Site settings → Hide from search engines**                                                                     |
 
 To release, merge `main` into `production`.
 
@@ -84,36 +84,37 @@ build log if an image is missing on the site.
 
 ### One-time setup
 
-1. **Sanity** (project `t88ezwbe`, dataset `production`). In *sanity.io/manage*:
-   - *API → CORS origins*: add `http://localhost:4321` and the QA URL, with
+1. **Sanity** (project `t88ezwbe`, dataset `production`). In _sanity.io/manage_:
+   - _API → CORS origins_: add `http://localhost:4321` and the QA URL, with
      credentials allowed.
-   - *API → Tokens*: create a **Viewer** token for the QA stage.
+   - _API → Tokens_: create a **Viewer** token for the QA stage.
    - Set `SANITY_STUDIO_PREVIEW_URL` in `studio/.env` to the QA URL, then
      deploy the Studio with `npm run deploy:studio`. After that, pushes to
      `main` that touch `studio/` deploy it (`deploy-studio.yml`).
-   - *API → Tokens*: create a **Deploy Studio** token for GitHub Actions.
-2. **GitHub.** Under *Settings → Environments*, create `qa` and
+   - _API → Tokens_: create a **Deploy Studio** token for GitHub Actions.
+2. **GitHub.** Under _Settings → Environments_, create `qa` and
    `production`, then add (all workflows use these names):
 
-   | Name | Kind | Value |
-   | --- | --- | --- |
-   | `SANITY_PROJECT_ID` | Repository variable | `t88ezwbe` |
-   | `SANITY_DATASET` | Repository variable | `production` |
-   | `SANITY_STUDIO_URL` | Repository variable | `https://maestro.sanity.studio` |
-   | `SANITY_STUDIO_PREVIEW_URL` | Repository variable | The QA URL |
-   | `SITE_DOMAIN` | Environment variable (`qa`, `production`) | Each stage's domain, once chosen |
-   | `SANITY_AUTH_TOKEN` | Repository secret | The Deploy Studio token |
-   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | Repository secrets | Already set |
+   | Name                                         | Kind                                      | Value                            |
+   | -------------------------------------------- | ----------------------------------------- | -------------------------------- |
+   | `SANITY_PROJECT_ID`                          | Repository variable                       | `t88ezwbe`                       |
+   | `SANITY_DATASET`                             | Repository variable                       | `production`                     |
+   | `SANITY_STUDIO_URL`                          | Repository variable                       | `https://maestro.sanity.studio`  |
+   | `SANITY_STUDIO_PREVIEW_URL`                  | Repository variable                       | The QA URL                       |
+   | `SITE_DOMAIN`                                | Environment variable (`qa`, `production`) | Each stage's domain, once chosen |
+   | `SANITY_AUTH_TOKEN`                          | Repository secret                         | The Deploy Studio token          |
+   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | Repository secrets                        | Already set                      |
+
 3. **QA secret.** Store the Viewer token for the QA stage:
    `npx sst secret set SanityReadToken <token> --stage qa` (from `frontend/`).
-4. **Publish webhook.** In Sanity, *API → Webhooks → Create*:
+4. **Publish webhook.** In Sanity, _API → Webhooks → Create_:
    - URL: `https://api.github.com/repos/arcature/web/dispatches`, method `POST`
    - Filter: `_type in ["siteSettings", "homePage"]`; trigger on create, update,
      and delete (drafts off)
    - Projection: `{"event_type": "sanity-publish"}`
    - Headers: `Authorization: Bearer <token>` and
      `Accept: application/vnd.github+json`, where the token is a fine-grained
-     GitHub token for `arcature/web` with *Contents: read and write*.
+     GitHub token for `arcature/web` with _Contents: read and write_.
 
 ### Launching
 

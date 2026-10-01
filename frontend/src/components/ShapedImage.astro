@@ -3,7 +3,7 @@
  * Renders a CMS image cropped into a fixed vector shape from the design, so
  * editors can swap the photo without breaking the art direction.
  */
-import { imageUrl, type CmsImage } from '../lib/images';
+import { type CmsImage, imageUrl } from '../lib/images';
 
 interface Props {
   image: CmsImage | undefined;
@@ -21,10 +21,22 @@ interface Props {
   class?: string;
 }
 
-const { image, alt, path, width, height, tint, filter, renderWidth = width, class: className } = Astro.props;
+const {
+  image,
+  alt,
+  path,
+  width,
+  height,
+  tint,
+  filter,
+  renderWidth = width,
+  class: className,
+} = Astro.props;
 
 const clipId = `clip-${Math.random().toString(36).slice(2, 9)}`;
-const href = image ? await imageUrl(image, renderWidth * 2, Astro.isPrerendered) : undefined;
+const href = image
+  ? await imageUrl(image, renderWidth * 2, Astro.isPrerendered)
+  : undefined;
 ---
 
 <svg
@@ -41,26 +53,32 @@ const href = image ? await imageUrl(image, renderWidth * 2, Astro.isPrerendered)
     </clipPath>
   </defs>
   <g clip-path={`url(#${clipId})`} style="isolation: isolate">
-    {
-      href ? (
-        <image
-          href={href}
+    {href ? (
+      <image
+        href={href}
+        width={width}
+        height={height}
+        preserveAspectRatio="xMidYMid slice"
+        style={filter ? `filter: ${filter}` : undefined}
+      />
+    ) : (
+      <rect width={width} height={height} fill="currentColor" />
+    )}
+    {tint && (
+      <>
+        <rect
           width={width}
           height={height}
-          preserveAspectRatio="xMidYMid slice"
-          style={filter ? `filter: ${filter}` : undefined}
+          fill={tint}
+          style="mix-blend-mode: color"
         />
-      ) : (
-        <rect width={width} height={height} fill="currentColor" />
-      )
-    }
-    {
-      tint && (
-        <>
-          <rect width={width} height={height} fill={tint} style="mix-blend-mode: color" />
-          <rect width={width} height={height} fill={tint} style="mix-blend-mode: overlay" />
-        </>
-      )
-    }
+        <rect
+          width={width}
+          height={height}
+          fill={tint}
+          style="mix-blend-mode: overlay"
+        />
+      </>
+    )}
   </g>
 </svg>

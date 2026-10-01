@@ -1,7 +1,7 @@
 ---
-import ShapedImage from '../ShapedImage.astro';
 import type { SectionOf } from '../../lib/content';
 import { resolveImage } from '../../lib/images';
+import ShapedImage from '../ShapedImage.astro';
 
 type Props = SectionOf<'statement'>;
 
@@ -15,7 +15,13 @@ const SHAPE =
 <section class="bg-ink text-paper">
   <div class="relative mx-auto flex max-w-[1440px] flex-col gap-10 px-4 py-16 md:block md:min-h-[800px] md:py-0">
     <div class="mx-auto w-full max-w-[493px] text-paper/10 md:absolute md:top-[61px] md:left-1/2 md:w-[34.25%] md:-translate-x-1/2">
-      <ShapedImage image={resolveImage(image)} alt={imageAlt ?? ''} path={SHAPE} width={493.41} height={679} tint="#676f49"
+      <ShapedImage
+        image={resolveImage(image)}
+        alt={imageAlt ?? ''}
+        path={SHAPE}
+        width={493.41}
+        height={679}
+        tint="#676f49"
         filter="brightness(1.5) contrast(0.84) saturate(1.24)"
       />
     </div>
@@ -23,7 +29,10 @@ const SHAPE =
       {lineOne}
       <span class="sr-only">{lineTwo}</span>
     </h2>
-    <p class="text-display relative capitalize md:absolute md:top-[467px] md:left-[57%] md:max-w-[541px]" aria-hidden="true">
+    <p
+      class="text-display relative capitalize md:absolute md:top-[467px] md:left-[57%] md:max-w-[541px]"
+      aria-hidden="true"
+    >
       {lineTwo}
     </p>
   </div>

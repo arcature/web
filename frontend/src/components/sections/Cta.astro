@@ -1,6 +1,6 @@
 ---
-import Button from '../Button.astro';
 import type { SectionOf } from '../../lib/content';
+import Button from '../Button.astro';
 
 type Props = SectionOf<'cta'>;
 
@@ -10,7 +10,10 @@ const { heading, body, cta } = Astro.props;
 <!-- Content is positioned so it paints above the footer artwork that rises into this section. -->
 <section id="demo" class="on-dark bg-ink text-paper">
   <div class="relative z-10">
-    <div class="grid h-12 grid-cols-2 border-b border-line-dark md:h-20" aria-hidden="true">
+    <div
+      class="grid h-12 grid-cols-2 border-b border-line-dark md:h-20"
+      aria-hidden="true"
+    >
       <div class="border-r border-line-dark"></div>
     </div>
     <div class="flex flex-col items-center border-b border-line-dark px-4 py-16 text-center md:min-h-[415px]">

@@ -1,8 +1,8 @@
 ---
-import Button from '../Button.astro';
-import CmsImage from '../CmsImage.astro';
 import type { SectionOf } from '../../lib/content';
 import { resolveImage } from '../../lib/images';
+import Button from '../Button.astro';
+import CmsImage from '../CmsImage.astro';
 
 type Props = SectionOf<'feature'>;
 
@@ -18,11 +18,20 @@ const src = resolveImage(image);
       <Button {...cta} class="mt-6" />
     </div>
   </div>
-  {
-    src && (
-      <div class:list={['aspect-square bg-mist', imageSide === 'left' && 'md:-order-1']}>
-        <CmsImage image={src} alt={imageAlt ?? ''} widths={[720, 1440]} sizes="(min-width: 768px) 50vw, 100vw" class="size-full object-cover" />
-      </div>
-    )
-  }
+  {src && (
+    <div
+      class:list={[
+        'aspect-square bg-mist',
+        imageSide === 'left' && 'md:-order-1',
+      ]}
+    >
+      <CmsImage
+        image={src}
+        alt={imageAlt ?? ''}
+        widths={[720, 1440]}
+        sizes="(min-width: 768px) 50vw, 100vw"
+        class="size-full object-cover"
+      />
+    </div>
+  )}
 </section>

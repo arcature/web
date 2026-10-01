@@ -1,7 +1,7 @@
 // @ts-check
-import { defineConfig, envField } from 'astro/config';
-import tailwindcss from '@tailwindcss/vite';
 import node from '@astrojs/node';
+import tailwindcss from '@tailwindcss/vite';
+import { defineConfig, envField } from 'astro/config';
 
 // Production prerenders every page (published content, images downloaded into
 // the build). The QA stage renders every page on request so Sanity's
@@ -16,8 +16,16 @@ const sanityPreview = () => ({
       route.prerender = false;
     },
     'astro:config:setup': ({ injectRoute }) => {
-      injectRoute({ pattern: '/api/draft-mode/enable', entrypoint: './src/preview/draft-mode-enable.ts', prerender: false });
-      injectRoute({ pattern: '/api/draft-mode/disable', entrypoint: './src/preview/draft-mode-disable.ts', prerender: false });
+      injectRoute({
+        pattern: '/api/draft-mode/enable',
+        entrypoint: './src/preview/draft-mode-enable.ts',
+        prerender: false,
+      });
+      injectRoute({
+        pattern: '/api/draft-mode/disable',
+        entrypoint: './src/preview/draft-mode-disable.ts',
+        prerender: false,
+      });
     },
   },
 });
@@ -29,14 +37,25 @@ export default defineConfig({
   integrations: isPreview ? [sanityPreview()] : [],
   env: {
     schema: {
-      PUBLIC_SANITY_PROJECT_ID: envField.string({ context: 'client', access: 'public' }),
-      PUBLIC_SANITY_DATASET: envField.string({ context: 'client', access: 'public', default: 'production' }),
+      PUBLIC_SANITY_PROJECT_ID: envField.string({
+        context: 'client',
+        access: 'public',
+      }),
+      PUBLIC_SANITY_DATASET: envField.string({
+        context: 'client',
+        access: 'public',
+        default: 'production',
+      }),
       PUBLIC_SANITY_STUDIO_URL: envField.string({
         context: 'client',
         access: 'public',
         default: 'https://maestro.sanity.studio',
       }),
-      SANITY_API_READ_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
+      SANITY_API_READ_TOKEN: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
     },
   },
   image: {
