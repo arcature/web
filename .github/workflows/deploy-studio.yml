@@ -27,16 +27,16 @@ jobs:
       SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT: ${{ secrets.SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         id: setup-node
         with:
           node-version-file: '.nvmrc'
           cache: npm
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: node-dep-cache
         with:
           path: '**/node_modules'
