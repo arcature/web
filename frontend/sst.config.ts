@@ -48,6 +48,13 @@ export default $config({
         'SANITY_API_READ_TOKEN must be set to deploy QA (a Sanity Viewer token).',
       );
     }
+    // A token pasted with its .env quotes, or a trailing newline, reaches
+    // Sanity as an unknown token ("Session not found") on every request.
+    if (readToken && !/^[A-Za-z0-9]+$/.test(readToken)) {
+      throw new Error(
+        'SANITY_API_READ_TOKEN has quotes, spaces or other characters a Sanity token never has. Set the GitHub secret to the bare token.',
+      );
+    }
 
     const preview: Record<string, string> = isProduction
       ? {}
