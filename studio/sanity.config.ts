@@ -5,8 +5,10 @@ import { presentationTool } from 'sanity/presentation';
 import { type StructureBuilder, structureTool } from 'sanity/structure';
 import { webhooksTrigger } from 'sanity-plugin-webhooks-trigger';
 
+import { previewUrl } from './presentation/previewUrl';
 import { resolve } from './presentation/resolve';
 import { schemaTypes, singletonTypes } from './schemaTypes';
+import { defaultDocumentNode, documentNode } from './structure/documentViews';
 
 // Encrypts the auth tokens the Deploy tool stores with each webhook. Changing
 // it makes saved tokens unreadable, so they'd have to be entered again.
@@ -16,7 +18,7 @@ const webhooksEncryptionSalt =
 // A singleton's ID is its type name.
 const singleton = (S: StructureBuilder, type: string) =>
   S.documentTypeListItem(type).child(
-    S.document().schemaType(type).documentId(type),
+    documentNode(S, type).schemaType(type).documentId(type),
   );
 
 export default defineConfig({
@@ -27,6 +29,7 @@ export default defineConfig({
 
   plugins: [
     structureTool({
+      defaultDocumentNode,
       // As in FK Kit: the pages, then everything site-wide in a Site settings folder.
       structure: (S) =>
         S.list()
@@ -53,10 +56,7 @@ export default defineConfig({
     presentationTool({
       // QA always shows drafts, so Presentation just loads it; there's no
       // draft mode to switch on.
-      previewUrl: {
-        origin:
-          process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:4321',
-      },
+      previewUrl: { origin: previewUrl },
       // Generated from shared/routes.ts: which document a URL shows, and
       // where each document is used.
       resolve,

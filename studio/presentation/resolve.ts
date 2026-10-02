@@ -14,19 +14,13 @@ import {
   pageTypes,
   publishedId,
 } from '../../shared/routes';
+import { siteWideTypes } from './previewPath';
 
 /**
  * How Presentation maps between URLs and documents, in both directions, from
  * the route rules in shared/routes.ts. Adding a page there is all it takes;
  * nothing here names a page or a type that has pages.
  */
-
-/** Documents shown on every page rather than on pages that reference them. */
-const siteWideMessages: Record<string, string> = {
-  siteSettings: 'Used on every page.',
-  mainNavigation: 'The header on every page.',
-  footerNavigation: 'The footer on every page.',
-};
 
 /** Documents with no page to show them on. */
 const noPageMessages: Record<string, string> = {
@@ -118,10 +112,10 @@ const locations: DocumentLocationResolver = (
   { id, type, perspectiveStack, variant },
   { documentStore },
 ) => {
-  if (siteWideMessages[type]) {
+  if (siteWideTypes[type]) {
     return {
       locations: fixedPages.map(({ title, path }) => ({ title, href: path })),
-      message: siteWideMessages[type],
+      message: siteWideTypes[type],
     };
   }
   if (noPageMessages[type]) {

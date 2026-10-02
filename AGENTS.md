@@ -120,7 +120,14 @@ fails without it). Production never gets it.
   `studio/presentation/resolve.ts` generates Presentation's `mainDocuments`
   (URL → document) and `locations` (document → its page and the pages that
   reference it) from it. **To add a page**, add it there and add its Astro
-  route; the Studio needs nothing else. Tests: `frontend/src/lib/routes.test.ts`. `VisualEditing.astro` is imported only in preview builds, so
+  route; the Studio needs nothing else. Tests: `frontend/src/lib/routes.test.ts`.
+- **Preview tab**: documents with a page (and the site-wide settings and
+  navigation, which preview the home page) get a Preview tab beside the form
+  (`studio/structure/PreviewView.tsx`, wired in by `documentViews.ts`). It
+  frames the page from `SANITY_STUDIO_PREVIEW_URL` (QA, which always shows
+  drafts), reloads 1.5 s after edits settle, and switches between desktop and
+  mobile widths. Which page comes from `studio/presentation/previewPath.ts`,
+  so new pages get the tab from `shared/routes.ts` alone. `VisualEditing.astro` is imported only in preview builds, so
   its CSS never reaches production. QA shows unpublished drafts to anyone who
   can reach it.
 - **Stega**: values used as classes, conditions or URLs must not carry stega
