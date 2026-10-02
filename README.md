@@ -20,8 +20,10 @@ npm run dev                   # site: http://localhost:4321, Studio: http://loca
 Add a dependency to one package with `npm install <name> -w frontend` (or
 `-w studio`).
 
-`npm run dev` shows published content. To try visual editing locally, add
-`SANITY_PREVIEW=true` and a `SANITY_API_READ_TOKEN` to `frontend/.env`, restart, and open
+`npm run dev` always shows draft content, so unpublished changes appear on
+refresh. It reads them with `SANITY_API_READ_TOKEN` in `frontend/.env` (a
+Viewer token); without one it falls back to published content. To try visual
+editing locally, also add `SANITY_PREVIEW=true`, restart, and open
 **Presentation** in the local Studio.
 
 After changing the schema (`studio/schemaTypes/`) or a query
@@ -36,10 +38,23 @@ sign in with a Sanity account; invite them under _sanity.io/manage → Members_.
 - **Home page → Sections** is an ordered list of blocks. Drag to reorder, remove
   a block to hide it, and use **Add item** to insert any section type (you can
   add a section type more than once, e.g. several "Feature" rows).
-- **Site settings** holds navigation, header buttons, and footer content.
+- **Site settings** is a folder of everything site-wide:
+  - **Site settings**: the site title, the page title, description, keywords
+    and indexing switch (**SEO**), and the sharing title, description and image
+    plus the social profiles (**Social**). Each profile is a platform and
+    username; the footer links to them in that order, and a profile with no
+    username is left out.
+  - **Main navigation**: the header links and its two buttons.
+  - **Footer navigation**: the tagline, background image, footer links,
+    copyright line and credit.
+  - **404 page**: its title and sections, built like the home page.
+  - **Redirects**: from an old path to a path or full URL, permanent (301) or
+    temporary (302). QA tries them straight away, even unpublished; the live
+    site picks them up once they're published and deployed.
 - **Presentation** shows the page with your unpublished changes. Click any text
-  to jump to its field. Changes reach the public site a few minutes after you
-  **Publish**.
+  to jump to its field.
+- **Deploy** rebuilds the site with what's published. **Publish** your changes,
+  then press the button there; they reach the public site a few minutes later.
 
 Headings are rendered in title case by CSS, so type them in sentence case.
 
@@ -66,9 +81,9 @@ Headings are rendered in title case by CSS, so type them in sentence case.
 | ------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Branch  | `main`                                                              | `production`                                                                                                                              |
 | Build   | `SANITY_PREVIEW=true npm run build`: every page rendered on request | `npm run build`: every page prerendered with published content; Sanity images downloaded and optimized into `frontend/dist/client/_astro` |
-| Hosting | Lambda (`frontend/lambda/server/handler.mjs`) behind CloudFront     | S3 + CloudFront (static files only, no server)                                                                                            |
-| Deploys | Push to `main`                                                      | Push to `production`, and every **publish** in Sanity (webhook)                                                                           |
-| Indexed | Never (`noindex`, `no-store`)                                       | Until launch, blocked by **Site settings → Hide from search engines**                                                                     |
+| Hosting | Lambda (`frontend/lambda/server/handler.mjs`) behind CloudFront     | The same Lambda, mostly serving the prerendered files; no Sanity requests                                                                 |
+| Deploys | Push to `main`                                                      | Push to `production`, and the Studio's **Deploy** tool                                                                                    |
+| Indexed | Never (`noindex`, `no-store`)                                       | Until launch, blocked by **Site settings → SEO → Hide from search engines**                                                               |
 
 To release, merge `main` into `production`.
 
@@ -107,24 +122,20 @@ build log if an image is missing on the site.
 
 3. **QA secret.** Store the Viewer token for the QA stage:
    `npx sst secret set SanityReadToken <token> --stage qa` (from `frontend/`).
-4. **Publish webhook.** In Sanity, _API → Webhooks → Create_:
+4. **Deploy button.** Content reaches the sites when an editor presses the
+   button in the Studio's **Deploy** tool (`sanity-plugin-webhooks-trigger`).
+   With `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` set, so the token is
+   stored encrypted, add a webhook there:
    - URL: `https://api.github.com/repos/arcature/web/dispatches`, method `POST`
-   - Filter: `_type in ["siteSettings", "homePage"]`; trigger on create, update,
-     and delete (drafts off)
-   - Projection: `{"event_type": "sanity-publish"}`
-   - Headers: `Authorization: Bearer <token>` and
-     `Accept: application/vnd.github+json`, where the token is a fine-grained
-     GitHub token for `arcature/web` with _Contents: read and write_.
-5. **Deploy button (optional).** The Studio's **Deploy** tool can rebuild
-   production on demand. Add a webhook there with the same URL and token as
-   step 4; its GitHub event type defaults to `sanity-publish`. Set
-   `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` first, so the token is stored
-   encrypted.
+   - Auth token: a fine-grained GitHub token for `arcature/web` with
+     _Contents: read and write_
+   - GitHub event type: `sanity-publish` (the default), which deploys production
 
 ### Launching
 
 Search engines are blocked until launch (`noindex` and `robots.txt`). To launch,
-uncheck **Site settings → Hide from search engines** and publish.
+uncheck **Site settings → SEO → Hide from search engines**, publish, and deploy
+from the **Deploy** tool.
 
 ## Notes
 

@@ -1,0 +1,2 @@
+# Written by the sanity-redirects integration on every build (redirects.mjs)
+src/generated/

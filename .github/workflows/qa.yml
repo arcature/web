@@ -1,6 +1,6 @@
-# Deploy main to the QA stage. QA renders pages on request, so it also serves
-# as the draft preview for Sanity's Presentation tool and needs no rebuild when
-# content changes.
+# Deploy main to the QA stage. QA renders pages and reads redirects on
+# request, drafts included, so it also serves as the draft preview for Sanity's
+# Presentation tool and needs no rebuild when content changes.
 name: Deploy QA
 
 on:

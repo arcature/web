@@ -2,11 +2,17 @@
 import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, envField } from 'astro/config';
+import { loadEnv } from 'vite';
+
+import { sanityRedirects } from './redirects.mjs';
 
 // Production prerenders every page (published content, images downloaded into
 // the build). The QA stage renders every page on request so Sanity's
 // Presentation tool can show drafts, and adds the draft-mode routes.
 const isPreview = process.env.SANITY_PREVIEW === 'true';
+
+// The config doesn't see .env on its own; CI sets these in the environment.
+const env = { ...loadEnv('', process.cwd(), 'PUBLIC_'), ...process.env };
 
 /** @returns {import('astro').AstroIntegration} */
 const sanityPreview = () => ({
@@ -32,9 +38,21 @@ const sanityPreview = () => ({
 
 // https://astro.build/config
 export default defineConfig({
-  // Standalone so the Lambda wrapper (src/lambda.ts) can serve static files too.
+  // Absolute URLs for canonical and social tags (see src/layouts/Seo.astro).
+  // SITE_DOMAIN is set per stage in GitHub and is also the SST router's domain.
+  site: process.env.SITE_DOMAIN
+    ? `https://${process.env.SITE_DOMAIN}`
+    : undefined,
+  // Standalone so the Lambda wrapper (lambda/server/handler.mjs) can serve static files too.
   adapter: node({ mode: 'standalone' }),
-  integrations: isPreview ? [sanityPreview()] : [],
+  integrations: [
+    // Both stages: src/middleware.ts answers the redirects kept in Sanity.
+    sanityRedirects({
+      projectId: env.PUBLIC_SANITY_PROJECT_ID ?? '',
+      dataset: env.PUBLIC_SANITY_DATASET || 'production',
+    }),
+    ...(isPreview ? [sanityPreview()] : []),
+  ],
   env: {
     schema: {
       PUBLIC_SANITY_PROJECT_ID: envField.string({

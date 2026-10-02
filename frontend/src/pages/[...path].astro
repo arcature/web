@@ -1,0 +1,8 @@
+---
+// Any path without a page or file. Rendered on request so src/middleware.ts
+// sees it and can answer a redirect; anything it doesn't redirect gets a 404,
+// which Astro serves as the prerendered 404 page (no Sanity request).
+export const prerender = false;
+
+return new Response(null, { status: 404 });
+---

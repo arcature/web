@@ -7,24 +7,31 @@ const button = `{ label, href }`;
 export const siteQuery =
   defineQuery(`*[_type == "siteSettings" && _id == "siteSettings"][0]{
   title,
-  description,
-  hideFromSearchEngines,
-  "navigation": coalesce(navigation[]${button}, []),
-  login${button},
-  headerCta${button},
-  footer{
+  seoTitle,
+  seoDescription,
+  "seoKeywords": coalesce(seoKeywords, []),
+  noIndex,
+  socialTitle,
+  socialDescription,
+  "socialImage": socialImage${image},
+  socialImageAlt,
+  "socialProfiles": coalesce(socialProfiles[]{ platform, username }, []),
+  "mainNavigation": *[_type == "mainNavigation" && _id == "mainNavigation"][0]{
+    "items": coalesce(items[]${button}, []),
+    login${button},
+    cta${button}
+  },
+  "footerNavigation": *[_type == "footerNavigation" && _id == "footerNavigation"][0]{
     tagline,
     "image": image${image},
-    "social": coalesce(social[]${button}, []),
+    "items": coalesce(items[]${button}, []),
     copyright,
     credit${button}
   }
 }`);
 
 // Lists fall back to [] so components can map over them even on half-finished drafts.
-export const homeQuery =
-  defineQuery(`*[_type == "homePage" && _id == "homePage"][0]{
-  "sections": coalesce(sections[]{
+const sections = `"sections": coalesce(sections[]{
     _key,
     _type,
     _type == "hero" => { heading, body, cta${button}, "image": image${image}, imageAlt },
@@ -45,5 +52,12 @@ export const homeQuery =
     _type == "statement" => { lineOne, lineTwo, "image": image${image}, imageAlt },
     _type == "feature" => { heading, body, cta${button}, "image": image${image}, imageAlt, imageSide },
     _type == "cta" => { heading, body, cta${button} }
-  }, [])
-}`);
+  }, [])`;
+
+export const homeQuery = defineQuery(
+  `*[_type == "homePage" && _id == "homePage"][0]{ ${sections} }`,
+);
+
+export const notFoundQuery = defineQuery(
+  `*[_type == "notFoundPage" && _id == "notFoundPage"][0]{ title, ${sections} }`,
+);

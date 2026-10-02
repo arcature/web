@@ -1,6 +1,11 @@
-import type { HomeQueryResult, SiteQueryResult } from '../sanity.types';
-import { homeQuery, siteQuery } from './queries';
+import type {
+  HomeQueryResult,
+  NotFoundQueryResult,
+  SiteQueryResult,
+} from '../sanity.types';
+import { homeQuery, notFoundQuery, siteQuery } from './queries';
 import {
+  canReadDrafts,
   client,
   draftClient,
   isDraftMode,
@@ -9,15 +14,25 @@ import {
 
 export type Site = NonNullable<SiteQueryResult>;
 export type Home = NonNullable<HomeQueryResult>;
+export type NotFound = NonNullable<NotFoundQueryResult>;
 export type Section = Home['sections'][number];
 export type SectionOf<K extends Section['_type']> = Omit<
   Extract<Section, { _type: K }>,
   '_type' | '_key'
 >;
 
-// Published content for prerendered pages; drafts (with stega) for preview requests in draft mode.
+// Local dev always shows drafts. Deployed, drafts (with stega) are only for
+// QA requests in draft mode; prerendered pages get published content.
+const devDrafts = import.meta.env.DEV && canReadDrafts;
+
+if (import.meta.env.DEV && !canReadDrafts) {
+  console.warn(
+    '[content] SANITY_API_READ_TOKEN is not set, so dev shows published content only.',
+  );
+}
+
 const clientFor = (context: RequestContext) =>
-  isDraftMode(context) ? draftClient() : client;
+  devDrafts || isDraftMode(context) ? draftClient() : client;
 
 export async function getSite(context: RequestContext): Promise<Site> {
   const site = await clientFor(context).fetch(siteQuery);
@@ -37,4 +52,14 @@ export async function getHome(context: RequestContext): Promise<Home> {
   }
 
   return home;
+}
+
+export async function getNotFound(context: RequestContext): Promise<NotFound> {
+  const notFound = await clientFor(context).fetch(notFoundQuery);
+
+  if (!notFound) {
+    throw new Error('Missing the "notFoundPage" document in Sanity');
+  }
+
+  return notFound;
 }

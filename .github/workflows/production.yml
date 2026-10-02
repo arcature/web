@@ -5,8 +5,8 @@ on:
   push:
     branches: ['production']
 
-  # Sent by the Sanity webhook when content is published, so the static site
-  # picks up the new content.
+  # Sent by the Studio's Deploy tool (sanity-plugin-webhooks-trigger), so the
+  # prerendered pages pick up published content.
   repository_dispatch:
     types: ['sanity-publish']
 

@@ -215,49 +215,47 @@ export type Hero = {
   imageAlt?: string;
 };
 
-export type SiteSettings = {
+export type Redirect = {
   _id: string;
-  _type: 'siteSettings';
+  _type: 'redirect';
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: string;
-  description?: string;
-  hideFromSearchEngines?: boolean;
-  navigation?: Array<{
+  source?: Slug;
+  destination?: string;
+  permanent?: boolean;
+};
+
+export type Slug = {
+  _type: 'slug';
+  current?: string;
+  source?: string;
+};
+
+export type FooterNavigation = {
+  _id: string;
+  _type: 'footerNavigation';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  tagline?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: 'image';
+  };
+  items?: Array<{
     label?: string;
     href?: string;
     _type: 'link';
     _key: string;
   }>;
-  login?: {
+  copyright?: string;
+  credit?: {
     label?: string;
     href?: string;
-  };
-  headerCta?: {
-    label?: string;
-    href?: string;
-  };
-  footer?: {
-    tagline?: string;
-    image?: {
-      asset?: SanityImageAssetReference;
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: 'image';
-    };
-    social?: Array<{
-      label?: string;
-      href?: string;
-      _type: 'link';
-      _key: string;
-    }>;
-    copyright?: string;
-    credit?: {
-      label?: string;
-      href?: string;
-    };
   };
 };
 
@@ -275,6 +273,101 @@ export type SanityImageHotspot = {
   y?: number;
   height?: number;
   width?: number;
+};
+
+export type MainNavigation = {
+  _id: string;
+  _type: 'mainNavigation';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  items?: Array<{
+    label?: string;
+    href?: string;
+    _type: 'link';
+    _key: string;
+  }>;
+  login?: {
+    label?: string;
+    href?: string;
+  };
+  cta?: {
+    label?: string;
+    href?: string;
+  };
+};
+
+export type SiteSettings = {
+  _id: string;
+  _type: 'siteSettings';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: Array<string>;
+  noIndex?: boolean;
+  socialTitle?: string;
+  socialDescription?: string;
+  socialImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: 'image';
+  };
+  socialImageAlt?: string;
+  socialProfiles?: Array<{
+    platform?: 'facebook' | 'instagram' | 'linkedin' | 'twitter' | 'youtube';
+    username?: string;
+    _type: 'socialProfile';
+    _key: string;
+  }>;
+};
+
+export type NotFoundPage = {
+  _id: string;
+  _type: 'notFoundPage';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  sections?: Array<
+    | ({
+        _key: string;
+      } & Hero)
+    | ({
+        _key: string;
+      } & Logos)
+    | ({
+        _key: string;
+      } & Intro)
+    | ({
+        _key: string;
+      } & Lifecycle)
+    | ({
+        _key: string;
+      } & Banner)
+    | ({
+        _key: string;
+      } & Comparison)
+    | ({
+        _key: string;
+      } & Teams)
+    | ({
+        _key: string;
+      } & Stats)
+    | ({
+        _key: string;
+      } & Statement)
+    | ({
+        _key: string;
+      } & Feature)
+    | ({
+        _key: string;
+      } & Cta)
+  >;
 };
 
 export type HomePage = {
@@ -417,12 +510,6 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type Slug = {
-  _type: 'slug';
-  current?: string;
-  source?: string;
-};
-
 export type AllSanitySchemaTypes =
   | HeroCta
   | IntroCta
@@ -447,9 +534,14 @@ export type AllSanitySchemaTypes =
   | Intro
   | Logos
   | Hero
-  | SiteSettings
+  | Redirect
+  | Slug
+  | FooterNavigation
   | SanityImageCrop
   | SanityImageHotspot
+  | MainNavigation
+  | SiteSettings
+  | NotFoundPage
   | HomePage
   | SanityImagePaletteSwatch
   | SanityImagePalette
@@ -458,38 +550,56 @@ export type AllSanitySchemaTypes =
   | SanityFileAsset
   | SanityAssetSourceData
   | SanityImageAsset
-  | Geopoint
-  | Slug;
+  | Geopoint;
 
 // Source: ../frontend/src/lib/queries.ts
 // Variable: siteQuery
-// Query: *[_type == "siteSettings" && _id == "siteSettings"][0]{  title,  description,  hideFromSearchEngines,  "navigation": coalesce(navigation[]{ label, href }, []),  login{ label, href },  headerCta{ label, href },  footer{    tagline,    "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height },    "social": coalesce(social[]{ label, href }, []),    copyright,    credit{ label, href }  }}
+// Query: *[_type == "siteSettings" && _id == "siteSettings"][0]{  title,  seoTitle,  seoDescription,  "seoKeywords": coalesce(seoKeywords, []),  noIndex,  socialTitle,  socialDescription,  "socialImage": socialImage{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height },  socialImageAlt,  "socialProfiles": coalesce(socialProfiles[]{ platform, username }, []),  "mainNavigation": *[_type == "mainNavigation" && _id == "mainNavigation"][0]{    "items": coalesce(items[]{ label, href }, []),    login{ label, href },    cta{ label, href }  },  "footerNavigation": *[_type == "footerNavigation" && _id == "footerNavigation"][0]{    tagline,    "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height },    "items": coalesce(items[]{ label, href }, []),    copyright,    credit{ label, href }  }}
 export type SiteQueryResult = {
   title: string | null;
-  description: string | null;
-  hideFromSearchEngines: boolean | null;
-  navigation:
+  seoTitle: string | null;
+  seoDescription: string | null;
+  seoKeywords: Array<string> | Array<never>;
+  noIndex: boolean | null;
+  socialTitle: string | null;
+  socialDescription: string | null;
+  socialImage: {
+    src: string | null;
+    width: number | null;
+    height: number | null;
+  } | null;
+  socialImageAlt: string | null;
+  socialProfiles:
     | Array<{
-        label: string | null;
-        href: string | null;
+        platform:
+          'facebook' | 'instagram' | 'linkedin' | 'twitter' | 'youtube' | null;
+        username: string | null;
       }>
     | Array<never>;
-  login: {
-    label: string | null;
-    href: string | null;
+  mainNavigation: {
+    items:
+      | Array<{
+          label: string | null;
+          href: string | null;
+        }>
+      | Array<never>;
+    login: {
+      label: string | null;
+      href: string | null;
+    } | null;
+    cta: {
+      label: string | null;
+      href: string | null;
+    } | null;
   } | null;
-  headerCta: {
-    label: string | null;
-    href: string | null;
-  } | null;
-  footer: {
+  footerNavigation: {
     tagline: string | null;
     image: {
       src: string | null;
       width: number | null;
       height: number | null;
     } | null;
-    social:
+    items:
       | Array<{
           label: string | null;
           href: string | null;
@@ -505,7 +615,7 @@ export type SiteQueryResult = {
 
 // Source: ../frontend/src/lib/queries.ts
 // Variable: homeQuery
-// Query: *[_type == "homePage" && _id == "homePage"][0]{  "sections": coalesce(sections[]{    _key,    _type,    _type == "hero" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },    _type == "logos" => { label, "logos": coalesce(logos[]{ _key, name, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height } }, []) },    _type == "intro" => { eyebrow, body, cta{ label, href }, "features": coalesce(features[]{ _key, title, body }, []) },    _type == "lifecycle" => {      heading,      cta{ label, href },      "items": coalesce(items[]{ _key, title, "tags": coalesce(tags, []), lead, body, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt }, [])    },    _type == "banner" => { heading, body, cta{ label, href }, accent },    _type == "comparison" => {      "before": { "title": before.title, "items": coalesce(before.items, []) },      "after": { "title": after.title, "items": coalesce(after.items, []) }    },    _type == "teams" => { heading, accent, "items": coalesce(items[]{ _key, title, body }, []) },    _type == "stats" => { heading, body, cta{ label, href }, "stats": coalesce(stats[]{ _key, label, value, bar }, []) },    _type == "statement" => { lineOne, lineTwo, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },    _type == "feature" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt, imageSide },    _type == "cta" => { heading, body, cta{ label, href } }  }, [])}
+// Query: *[_type == "homePage" && _id == "homePage"][0]{ "sections": coalesce(sections[]{    _key,    _type,    _type == "hero" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },    _type == "logos" => { label, "logos": coalesce(logos[]{ _key, name, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height } }, []) },    _type == "intro" => { eyebrow, body, cta{ label, href }, "features": coalesce(features[]{ _key, title, body }, []) },    _type == "lifecycle" => {      heading,      cta{ label, href },      "items": coalesce(items[]{ _key, title, "tags": coalesce(tags, []), lead, body, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt }, [])    },    _type == "banner" => { heading, body, cta{ label, href }, accent },    _type == "comparison" => {      "before": { "title": before.title, "items": coalesce(before.items, []) },      "after": { "title": after.title, "items": coalesce(after.items, []) }    },    _type == "teams" => { heading, accent, "items": coalesce(items[]{ _key, title, body }, []) },    _type == "stats" => { heading, body, cta{ label, href }, "stats": coalesce(stats[]{ _key, label, value, bar }, []) },    _type == "statement" => { lineOne, lineTwo, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },    _type == "feature" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt, imageSide },    _type == "cta" => { heading, body, cta{ label, href } }  }, []) }
 export type HomeQueryResult = {
   sections:
     | Array<never>
@@ -679,11 +789,199 @@ export type HomeQueryResult = {
       >;
 } | null;
 
+// Source: ../frontend/src/lib/queries.ts
+// Variable: notFoundQuery
+// Query: *[_type == "notFoundPage" && _id == "notFoundPage"][0]{ title, "sections": coalesce(sections[]{    _key,    _type,    _type == "hero" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },    _type == "logos" => { label, "logos": coalesce(logos[]{ _key, name, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height } }, []) },    _type == "intro" => { eyebrow, body, cta{ label, href }, "features": coalesce(features[]{ _key, title, body }, []) },    _type == "lifecycle" => {      heading,      cta{ label, href },      "items": coalesce(items[]{ _key, title, "tags": coalesce(tags, []), lead, body, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt }, [])    },    _type == "banner" => { heading, body, cta{ label, href }, accent },    _type == "comparison" => {      "before": { "title": before.title, "items": coalesce(before.items, []) },      "after": { "title": after.title, "items": coalesce(after.items, []) }    },    _type == "teams" => { heading, accent, "items": coalesce(items[]{ _key, title, body }, []) },    _type == "stats" => { heading, body, cta{ label, href }, "stats": coalesce(stats[]{ _key, label, value, bar }, []) },    _type == "statement" => { lineOne, lineTwo, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },    _type == "feature" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt, imageSide },    _type == "cta" => { heading, body, cta{ label, href } }  }, []) }
+export type NotFoundQueryResult = {
+  title: string | null;
+  sections:
+    | Array<never>
+    | Array<
+        | {
+            _key: string;
+            _type: 'banner';
+            heading: string | null;
+            body: string | null;
+            cta: {
+              label: string | null;
+              href: string | null;
+            } | null;
+            accent: 'blue' | 'ink' | 'olive' | 'red' | null;
+          }
+        | {
+            _key: string;
+            _type: 'comparison';
+            before: {
+              title: string | null;
+              items: Array<string> | Array<never>;
+            };
+            after: {
+              title: string | null;
+              items: Array<string> | Array<never>;
+            };
+          }
+        | {
+            _key: string;
+            _type: 'cta';
+            heading: string | null;
+            body: string | null;
+            cta: {
+              label: string | null;
+              href: string | null;
+            } | null;
+          }
+        | {
+            _key: string;
+            _type: 'feature';
+            heading: string | null;
+            body: string | null;
+            cta: {
+              label: string | null;
+              href: string | null;
+            } | null;
+            image: {
+              src: string | null;
+              width: number | null;
+              height: number | null;
+            } | null;
+            imageAlt: string | null;
+            imageSide: 'left' | 'right' | null;
+          }
+        | {
+            _key: string;
+            _type: 'hero';
+            heading: string | null;
+            body: string | null;
+            cta: {
+              label: string | null;
+              href: string | null;
+            } | null;
+            image: {
+              src: string | null;
+              width: number | null;
+              height: number | null;
+            } | null;
+            imageAlt: string | null;
+          }
+        | {
+            _key: string;
+            _type: 'intro';
+            eyebrow: string | null;
+            body: string | null;
+            cta: {
+              label: string | null;
+              href: string | null;
+            } | null;
+            features:
+              | Array<{
+                  _key: string;
+                  title: string | null;
+                  body: string | null;
+                }>
+              | Array<never>;
+          }
+        | {
+            _key: string;
+            _type: 'lifecycle';
+            heading: string | null;
+            cta: {
+              label: string | null;
+              href: string | null;
+            } | null;
+            items:
+              | Array<{
+                  _key: string;
+                  title: string | null;
+                  tags: Array<string> | Array<never>;
+                  lead: string | null;
+                  body: string | null;
+                  image: {
+                    src: string | null;
+                    width: number | null;
+                    height: number | null;
+                  } | null;
+                  imageAlt: string | null;
+                }>
+              | Array<never>;
+          }
+        | {
+            _key: string;
+            _type: 'logos';
+            label: string | null;
+            logos:
+              | Array<{
+                  _key: string;
+                  name: string | null;
+                  image: {
+                    src: string | null;
+                    width: number | null;
+                    height: number | null;
+                  } | null;
+                }>
+              | Array<never>;
+          }
+        | {
+            _key: string;
+            _type: 'statement';
+            lineOne: string | null;
+            lineTwo: string | null;
+            image: {
+              src: string | null;
+              width: number | null;
+              height: number | null;
+            } | null;
+            imageAlt: string | null;
+          }
+        | {
+            _key: string;
+            _type: 'stats';
+            heading: string | null;
+            body: string | null;
+            cta: {
+              label: string | null;
+              href: string | null;
+            } | null;
+            stats:
+              | Array<{
+                  _key: string;
+                  label: string | null;
+                  value: string | null;
+                  bar: number | null;
+                }>
+              | Array<never>;
+          }
+        | {
+            _key: string;
+            _type: 'teams';
+            heading: string | null;
+            accent: 'blue' | 'ink' | 'olive' | 'red' | null;
+            items:
+              | Array<{
+                  _key: string;
+                  title: string | null;
+                  body: string | null;
+                }>
+              | Array<never>;
+          }
+      >;
+} | null;
+
+// Source: ../frontend/src/lib/redirects.ts
+// Variable: redirectsQuery
+// Query: *[_type == "redirect" && defined(source.current) && defined(destination)]{    "source": source.current,    destination,    permanent  } | order(_createdAt asc)
+export type RedirectsQueryResult = Array<{
+  source: string | null;
+  destination: string | null;
+  permanent: boolean | null;
+}>;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
-    '*[_type == "siteSettings" && _id == "siteSettings"][0]{\n  title,\n  description,\n  hideFromSearchEngines,\n  "navigation": coalesce(navigation[]{ label, href }, []),\n  login{ label, href },\n  headerCta{ label, href },\n  footer{\n    tagline,\n    "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height },\n    "social": coalesce(social[]{ label, href }, []),\n    copyright,\n    credit{ label, href }\n  }\n}': SiteQueryResult;
-    '*[_type == "homePage" && _id == "homePage"][0]{\n  "sections": coalesce(sections[]{\n    _key,\n    _type,\n    _type == "hero" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },\n    _type == "logos" => { label, "logos": coalesce(logos[]{ _key, name, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height } }, []) },\n    _type == "intro" => { eyebrow, body, cta{ label, href }, "features": coalesce(features[]{ _key, title, body }, []) },\n    _type == "lifecycle" => {\n      heading,\n      cta{ label, href },\n      "items": coalesce(items[]{ _key, title, "tags": coalesce(tags, []), lead, body, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt }, [])\n    },\n    _type == "banner" => { heading, body, cta{ label, href }, accent },\n    _type == "comparison" => {\n      "before": { "title": before.title, "items": coalesce(before.items, []) },\n      "after": { "title": after.title, "items": coalesce(after.items, []) }\n    },\n    _type == "teams" => { heading, accent, "items": coalesce(items[]{ _key, title, body }, []) },\n    _type == "stats" => { heading, body, cta{ label, href }, "stats": coalesce(stats[]{ _key, label, value, bar }, []) },\n    _type == "statement" => { lineOne, lineTwo, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },\n    _type == "feature" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt, imageSide },\n    _type == "cta" => { heading, body, cta{ label, href } }\n  }, [])\n}': HomeQueryResult;
+    '*[_type == "siteSettings" && _id == "siteSettings"][0]{\n  title,\n  seoTitle,\n  seoDescription,\n  "seoKeywords": coalesce(seoKeywords, []),\n  noIndex,\n  socialTitle,\n  socialDescription,\n  "socialImage": socialImage{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height },\n  socialImageAlt,\n  "socialProfiles": coalesce(socialProfiles[]{ platform, username }, []),\n  "mainNavigation": *[_type == "mainNavigation" && _id == "mainNavigation"][0]{\n    "items": coalesce(items[]{ label, href }, []),\n    login{ label, href },\n    cta{ label, href }\n  },\n  "footerNavigation": *[_type == "footerNavigation" && _id == "footerNavigation"][0]{\n    tagline,\n    "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height },\n    "items": coalesce(items[]{ label, href }, []),\n    copyright,\n    credit{ label, href }\n  }\n}': SiteQueryResult;
+    '*[_type == "homePage" && _id == "homePage"][0]{ "sections": coalesce(sections[]{\n    _key,\n    _type,\n    _type == "hero" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },\n    _type == "logos" => { label, "logos": coalesce(logos[]{ _key, name, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height } }, []) },\n    _type == "intro" => { eyebrow, body, cta{ label, href }, "features": coalesce(features[]{ _key, title, body }, []) },\n    _type == "lifecycle" => {\n      heading,\n      cta{ label, href },\n      "items": coalesce(items[]{ _key, title, "tags": coalesce(tags, []), lead, body, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt }, [])\n    },\n    _type == "banner" => { heading, body, cta{ label, href }, accent },\n    _type == "comparison" => {\n      "before": { "title": before.title, "items": coalesce(before.items, []) },\n      "after": { "title": after.title, "items": coalesce(after.items, []) }\n    },\n    _type == "teams" => { heading, accent, "items": coalesce(items[]{ _key, title, body }, []) },\n    _type == "stats" => { heading, body, cta{ label, href }, "stats": coalesce(stats[]{ _key, label, value, bar }, []) },\n    _type == "statement" => { lineOne, lineTwo, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },\n    _type == "feature" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt, imageSide },\n    _type == "cta" => { heading, body, cta{ label, href } }\n  }, []) }': HomeQueryResult;
+    '*[_type == "notFoundPage" && _id == "notFoundPage"][0]{ title, "sections": coalesce(sections[]{\n    _key,\n    _type,\n    _type == "hero" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },\n    _type == "logos" => { label, "logos": coalesce(logos[]{ _key, name, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height } }, []) },\n    _type == "intro" => { eyebrow, body, cta{ label, href }, "features": coalesce(features[]{ _key, title, body }, []) },\n    _type == "lifecycle" => {\n      heading,\n      cta{ label, href },\n      "items": coalesce(items[]{ _key, title, "tags": coalesce(tags, []), lead, body, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt }, [])\n    },\n    _type == "banner" => { heading, body, cta{ label, href }, accent },\n    _type == "comparison" => {\n      "before": { "title": before.title, "items": coalesce(before.items, []) },\n      "after": { "title": after.title, "items": coalesce(after.items, []) }\n    },\n    _type == "teams" => { heading, accent, "items": coalesce(items[]{ _key, title, body }, []) },\n    _type == "stats" => { heading, body, cta{ label, href }, "stats": coalesce(stats[]{ _key, label, value, bar }, []) },\n    _type == "statement" => { lineOne, lineTwo, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt },\n    _type == "feature" => { heading, body, cta{ label, href }, "image": image{ "src": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }, imageAlt, imageSide },\n    _type == "cta" => { heading, body, cta{ label, href } }\n  }, []) }': NotFoundQueryResult;
+    '*[_type == "redirect" && defined(source.current) && defined(destination)]{\n    "source": source.current,\n    destination,\n    permanent\n  } | order(_createdAt asc)': RedirectsQueryResult;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

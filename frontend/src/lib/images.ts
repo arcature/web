@@ -53,3 +53,37 @@ export async function imageUrl(
 
   return optimized.src;
 }
+
+// Open Graph image size, as in clio (frontend/src/lib/image.ts).
+const SOCIAL_IMAGE = { width: 1200, height: 628 };
+
+/**
+ * A social sharing image cropped to 1200 × 628 JPEG. Like `imageUrl`, built into
+ * the output when prerendered and from Sanity's CDN otherwise. The result may be
+ * a path; resolve it against the site URL before using it in a meta tag.
+ */
+export async function socialImageUrl(
+  image: CmsImage,
+  isPrerendered: boolean,
+): Promise<string> {
+  if (!isPrerendered) {
+    const url = new URL(image.src);
+    url.searchParams.set('w', String(SOCIAL_IMAGE.width));
+    url.searchParams.set('h', String(SOCIAL_IMAGE.height));
+    url.searchParams.set('fit', 'crop');
+    url.searchParams.set('fm', 'jpg');
+    url.searchParams.set('q', '80');
+
+    return url.toString();
+  }
+
+  const optimized = await getImage({
+    src: image.src,
+    ...SOCIAL_IMAGE,
+    fit: 'cover',
+    format: 'jpg',
+    quality: 80,
+  });
+
+  return optimized.src;
+}

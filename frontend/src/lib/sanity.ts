@@ -17,6 +17,9 @@ export const client = createClient({
   perspective: 'published',
 });
 
+/** Whether drafts can be read at all (QA, and local dev with a token in .env). */
+export const canReadDrafts = Boolean(SANITY_API_READ_TOKEN);
+
 export const draftClient = () =>
   client.withConfig({
     token: SANITY_API_READ_TOKEN,
@@ -28,7 +31,13 @@ export const draftClient = () =>
       filter: (props) => {
         const key = props.sourcePath.at(-1);
 
-        if (key === 'href' || key === 'accent' || key === 'imageSide') {
+        if (
+          key === 'href' ||
+          key === 'accent' ||
+          key === 'imageSide' ||
+          key === 'platform' ||
+          key === 'username'
+        ) {
           return false;
         }
 

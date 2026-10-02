@@ -4,21 +4,20 @@ import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import type { Site } from '../lib/content';
+import Seo from './Seo.astro';
 
 interface Props {
   site: Site;
+  /** Page title, for pages other than the home page. */
   title?: string;
+  /** Keep this page out of search engines whatever Site settings say. */
+  noIndex?: boolean;
   footerOverlap?: boolean;
   /** Showing drafts inside Sanity's Presentation tool. */
   draftMode?: boolean;
 }
 
-const {
-  site,
-  title = site.title ?? '',
-  footerOverlap,
-  draftMode = false,
-} = Astro.props;
+const { site, title, noIndex, footerOverlap, draftMode = false } = Astro.props;
 
 // Only preview builds include the overlay; otherwise its CSS would be linked from every page.
 const VisualEditing = import.meta.env.SANITY_PREVIEW
@@ -31,13 +30,10 @@ const VisualEditing = import.meta.env.SANITY_PREVIEW
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={site.description ?? undefined} />
-    {(site.hideFromSearchEngines || draftMode) && (
-      <meta name="robots" content="noindex, nofollow" />
-    )}
-    <title>{title}</title>
+    <Seo site={site} title={title} noIndex={noIndex} draftMode={draftMode} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body class="overflow-x-clip">
     <a

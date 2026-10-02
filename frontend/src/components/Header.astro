@@ -8,6 +8,8 @@ interface Props {
 }
 
 const { site } = Astro.props;
+const nav = site.mainNavigation;
+const items = nav?.items ?? [];
 ---
 
 <header class="on-dark relative z-30 border-b border-line-dark bg-ink text-paper">
@@ -19,7 +21,7 @@ const { site } = Astro.props;
 
     <nav aria-label="Main" class="hidden lg:block">
       <ul class="flex gap-2">
-        {site.navigation.map((item) => (
+        {items.map((item) => (
           <li>
             <a
               href={item.href}
@@ -33,8 +35,8 @@ const { site } = Astro.props;
     </nav>
 
     <div class="hidden items-center gap-3 lg:flex">
-      <Button {...site.login} variant="outline" />
-      <Button {...site.headerCta} variant="light" />
+      <Button {...nav?.login} variant="outline" />
+      <Button {...nav?.cta} variant="light" />
     </div>
 
     <button
@@ -66,7 +68,7 @@ const { site } = Astro.props;
   >
     <nav aria-label="Main">
       <ul class="flex flex-col">
-        {site.navigation.map((item) => (
+        {items.map((item) => (
           <li class="border-b border-line-dark">
             <a href={item.href} class="label flex min-h-12 items-center">
               {item.label}
@@ -76,8 +78,8 @@ const { site } = Astro.props;
       </ul>
     </nav>
     <div class="mt-6 flex flex-wrap gap-3">
-      <Button {...site.login} variant="outline" />
-      <Button {...site.headerCta} variant="light" />
+      <Button {...nav?.login} variant="outline" />
+      <Button {...nav?.cta} variant="light" />
     </div>
   </div>
 </header>

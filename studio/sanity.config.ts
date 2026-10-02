@@ -1,22 +1,27 @@
+import { CogIcon } from '@sanity/icons/Cog';
 import { visionTool } from '@sanity/vision';
 import { defineConfig } from 'sanity';
 import { presentationTool } from 'sanity/presentation';
-import { structureTool } from 'sanity/structure';
+import { type StructureBuilder, structureTool } from 'sanity/structure';
 import { webhooksTrigger } from 'sanity-plugin-webhooks-trigger';
 
-import { schemaTypes, singletons } from './schemaTypes';
-
-const singletonTypes = new Set<string>(
-  singletons.map((singleton) => singleton.type),
-);
+import { schemaTypes, singletonTypes } from './schemaTypes';
 
 // Encrypts the auth tokens the Deploy tool stores with each webhook. Changing
 // it makes saved tokens unreadable, so they'd have to be entered again.
 const webhooksEncryptionSalt =
   process.env.SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT || undefined;
 
-// Every document on this site is shown on the home page.
-const onHomePage = { locations: [{ title: 'Home page', href: '/' }] };
+// A singleton's ID is its type name.
+const singleton = (S: StructureBuilder, type: string) =>
+  S.documentTypeListItem(type).child(
+    S.document().schemaType(type).documentId(type),
+  );
+
+const homeLocation = { title: 'Home page', href: '/' };
+const notFoundLocation = { title: '404 page', href: '/404' };
+// Settings and navigation appear on every page.
+const everyPage = { locations: [homeLocation, notFoundLocation] };
 
 export default defineConfig({
   name: 'default',
@@ -26,17 +31,28 @@ export default defineConfig({
 
   plugins: [
     structureTool({
+      // As clio: the pages, then everything site-wide in a Site settings folder.
       structure: (S) =>
         S.list()
           .title('Content')
-          .items(
-            singletons.map(({ type, id, title }) =>
-              S.listItem()
-                .title(title)
-                .id(id)
-                .child(S.document().schemaType(type).documentId(id)),
-            ),
-          ),
+          .items([
+            singleton(S, 'homePage'),
+            S.divider(),
+            S.listItem()
+              .title('Site settings')
+              .icon(CogIcon)
+              .child(
+                S.list()
+                  .title('Site settings')
+                  .items([
+                    singleton(S, 'siteSettings'),
+                    singleton(S, 'mainNavigation'),
+                    singleton(S, 'footerNavigation'),
+                    singleton(S, 'notFoundPage'),
+                    S.documentTypeListItem('redirect').title('Redirects'),
+                  ]),
+              ),
+          ]),
     }),
     presentationTool({
       previewUrl: {
@@ -48,7 +64,13 @@ export default defineConfig({
         },
       },
       resolve: {
-        locations: { homePage: onHomePage, siteSettings: onHomePage },
+        locations: {
+          homePage: { locations: [homeLocation] },
+          notFoundPage: { locations: [notFoundLocation] },
+          siteSettings: everyPage,
+          mainNavigation: everyPage,
+          footerNavigation: everyPage,
+        },
       },
     }),
     webhooksTrigger({

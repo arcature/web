@@ -48,12 +48,15 @@ script yet and fails.
 | Branch       | Workflow         | SST stage    | What it is                                                  |
 | ------------ | ---------------- | ------------ | ----------------------------------------------------------- |
 | `main`       | `qa.yml`         | `qa`         | Pages render on request in a Lambda; Presentation's preview |
-| `production` | `production.yml` | `production` | Fully prerendered, static files in S3 behind CloudFront     |
+| `production` | `production.yml` | `production` | Fully prerendered; the same Lambda serves the files         |
 
 Both call the reusable `deploy.yml` (build, then `npx sst deploy` from
-`frontend/`). Release by merging `main` into `production`. Production also
-rebuilds on a `repository_dispatch` of type `sanity-publish`, sent by the Sanity
-publish webhook or the Studio's **Deploy** tool. `deploy-studio.yml` deploys the
+`frontend/`), and both are the Astro Node entry point in a Lambda behind an SST
+Router; only QA gets `SANITY_PREVIEW` and the Sanity read token. Release by
+merging `main` into `production`. Production also rebuilds on a
+`repository_dispatch` of type `sanity-publish`, sent by the Studio's **Deploy**
+tool (`sanity-plugin-webhooks-trigger`); QA reads content and redirects live, so
+it doesn't. Sanity's own webhooks aren't used. `deploy-studio.yml` deploys the
 Studio on pushes to `main` that touch `studio/`.
 
 GitHub variable and secret names are listed in the README's one-time setup.
@@ -62,10 +65,22 @@ GitHub one.
 
 ## Architecture
 
-- **Content**: two singleton documents, `siteSettings` and `homePage` (fixed IDs,
-  can't be created, duplicated or deleted). `homePage.sections` is an array of 11
-  section object types, rendered by `frontend/src/pages/index.astro` with a
-  `switch` on `_type`.
+- **Content**: singleton documents `homePage`, `notFoundPage`, `siteSettings`,
+  `mainNavigation` and `footerNavigation` (ID = type name; can't be created,
+  duplicated or deleted), plus `redirect` documents. `sections` is an array of
+  11 section object types, rendered by `frontend/src/components/Sections.astro`
+  with a `switch` on `_type`. The Studio lists the home page, then a Site
+  settings folder with the rest (`studio/sanity.config.ts`).
+- **SEO and social**: `siteSettings` carries clio's `seoFields` and
+  `socialFields` (`studio/schemaTypes/seo.ts`; `noIndex` is the pre-launch
+  "Hide from search engines" switch and also drives `robots.txt`) plus
+  `socialProfiles` (platform + username). `frontend/src/lib/social.ts` turns
+  those into the footer's links and the `twitter:site` handle; its platform list
+  must match the one in `seo.ts`. `frontend/src/layouts/Seo.astro` renders `<title>`, meta,
+  canonical, Open Graph and Twitter tags, merging optional page props over the
+  site values and stripping stega. Absolute URLs come from Astro's `site`, set
+  from `SITE_DOMAIN`; without it canonical, `og:url` and `og:image` are omitted.
+  The social image is cropped to 1200 × 628 (`socialImageUrl` in `images.ts`).
 - **Schema**: `studio/schemaTypes/`. Field helpers (`cta`, `accent`, `alt`,
   `linkList`, …) are in `fields.ts`; section types in `sections.ts`.
 - **Queries and types**: GROQ in `frontend/src/lib/queries.ts` (`defineQuery`).
@@ -81,20 +96,39 @@ GitHub one.
   (`frontend/src/preview/`). Without it, everything is prerendered.
 - **Draft mode**: Presentation calls `/api/draft-mode/enable` with a signed
   secret; the route sets an HMAC cookie derived from `SANITY_API_READ_TOKEN`.
-  Only then are drafts fetched, with stega encoding for click-to-edit.
+  Only then are drafts fetched, with stega encoding for click-to-edit. Local
+  `npm run dev` always fetches drafts when the token is set (`clientFor` in
+  `content.ts`), without draft mode.
   `VisualEditing.astro` is imported only in preview builds, so its CSS never
   reaches production.
 - **Stega**: values used as classes, conditions or URLs must not carry stega
   characters. The filter in `frontend/src/lib/sanity.ts` excludes `href`,
-  `accent` and `imageSide`; add any new key of that kind there.
+  `accent`, `imageSide`, `platform` and `username`; add any new key of that kind
+  there.
+- **Navigation and 404**: `mainNavigation`, `footerNavigation` and
+  `notFoundPage` are singletons (as in clio), fetched with `siteSettings` by
+  `siteQuery`. `notFoundPage` has a title and the same sections as `homePage`,
+  both rendered by `Sections.astro`, whose first hero (or else first call to
+  action) gets the page's `<h1>`.
+- **Redirects**: `redirect` documents (exact paths only), answered with a
+  301/302 by `src/middleware.ts`, in draft mode too. Production matches against
+  `src/generated/redirects.json` (gitignored), which the `sanity-redirects`
+  integration (`frontend/redirects.mjs`) builds from published content; QA and
+  dev query Sanity on each request with the draft client (stega off). The
+  query, validation and matching are shared in `src/lib/redirects.ts`.
+  Prerendered pages are files
+  the middleware never sees, so `src/pages/[...path].astro` renders unmatched
+  paths on request: the middleware redirects, or the route returns 404 and
+  Astro serves the prerendered 404 page.
 - **Images**: `frontend/src/lib/images.ts` and `CmsImage.astro`. Prerendered
   pages download and optimize Sanity images into `dist/client/_astro` (allowed
   domain `cdn.sanity.io`), so production never loads from Sanity. On-request
   pages use Sanity CDN URLs instead. `ShapedImage.astro` crops images into the
   design's SVG shapes.
-- **Hosting**: `@astrojs/node` (standalone) for both builds.
-  `frontend/lambda/server/handler.mjs` wraps it with `serverless-http` for the QA
-  Lambda. It must stay in a folder named `server`: the adapter finds static files
+- **Hosting**: `@astrojs/node` (standalone) for both stages.
+  `frontend/lambda/server/handler.mjs` wraps it with `serverless-http`; on QA it
+  also sends `no-store` and `noindex`. Production makes no Sanity requests at
+  runtime: pages and the 404 page are prerendered files. It must stay in a folder named `server`: the adapter finds static files
   by walking up to `server/` and looking for `../client`, and `sst.config.ts`
   copies `dist/client` to `lambda/client`.
 
@@ -141,6 +175,8 @@ GitHub one.
 | `frontend/astro.config.mjs`          | Adapter, env schema, image domains, preview integration |
 | `frontend/sst.config.ts`             | SST stages: static site (production), Lambda (QA)       |
 | `frontend/lambda/server/handler.mjs` | QA Lambda entry                                         |
+| `frontend/src/middleware.ts`         | Redirects: built list in production, live on QA and dev |
+| `frontend/redirects.mjs`             | Builds production's redirect list from Sanity           |
 | `frontend/src/lib/queries.ts`        | GROQ queries                                            |
 | `frontend/src/lib/sanity.ts`         | Sanity clients, stega filter, draft-mode cookie         |
 | `frontend/src/lib/images.ts`         | Build-time vs CDN image URLs                            |

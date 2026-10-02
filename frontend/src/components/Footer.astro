@@ -2,6 +2,7 @@
 import Wordmark from '../assets/brand/wordmark.svg';
 import type { Site } from '../lib/content';
 import { resolveImage } from '../lib/images';
+import { socialLinks } from '../lib/social';
 import ShapedImage from './ShapedImage.astro';
 
 interface Props {
@@ -11,7 +12,8 @@ interface Props {
 }
 
 const { site, overlapPrevious = false } = Astro.props;
-const { footer } = site;
+const footer = site.footerNavigation;
+const social = socialLinks(site.socialProfiles);
 
 // "M" silhouette from the Figma boolean (outer shape minus the bottom notch).
 const SHAPE =
@@ -46,7 +48,7 @@ const SHAPE =
       <div class="flex gap-16">
         <nav aria-label="Footer">
           <ul class="flex flex-col">
-            {site.navigation.map((item) => (
+            {(footer?.items ?? []).map((item) => (
               <li>
                 <a
                   href={item.href}
@@ -58,20 +60,24 @@ const SHAPE =
             ))}
           </ul>
         </nav>
-        <nav aria-label="Social">
-          <ul class="flex flex-col">
-            {(footer?.social ?? []).map((item) => (
-              <li>
-                <a
-                  href={item.href}
-                  class="label inline-flex min-h-11 items-center hover:underline md:min-h-[33px]"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {social.length > 0 && (
+          <nav aria-label="Social">
+            <ul class="flex flex-col">
+              {social.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="label inline-flex min-h-11 items-center hover:underline md:min-h-[33px]"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </div>
     </div>
 
