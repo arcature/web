@@ -53,14 +53,15 @@ export default $config({
       ? {}
       : { SANITY_PREVIEW: 'true', SANITY_API_READ_TOKEN: readToken! };
 
-    // See lambda/server/handler.mjs for why dist/client is copied to lambda/client.
+    // Deploys .lambda/ as packaged by lambda/build.mjs (part of `npm run
+    // build`), not bundled by SST: the Astro Node adapter needs the layout it
+    // keeps (server/ beside client/).
     const server = new sst.aws.Function('Server', {
-      handler: 'lambda/server/handler.handler',
+      bundle: '.lambda',
+      handler: 'index.handler',
       runtime: 'nodejs24.x', // Keep in step with .nvmrc
       memory: '1024 MB',
       timeout: '20 seconds',
-      copyFiles: [{ from: 'dist/client', to: 'lambda/client' }],
-      nodejs: { esbuild: { external: ['sharp'] } },
       environment: { ASTRO_NODE_AUTOSTART: 'disabled', ...preview },
       // IAM auth: only signed requests get in (see the OAC below).
       url: { authorization: 'iam' },

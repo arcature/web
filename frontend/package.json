@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node lambda/build.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
@@ -34,6 +34,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@types/node": "^26.6.3",
+    "esbuild": "^0.28.2",
     "eslint": "^10.11.0",
     "eslint-plugin-astro": "^3.2.1",
     "eslint-plugin-simple-import-sort": "^14.0.0",

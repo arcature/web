@@ -7,3 +7,6 @@ package-lock.json
 
 # Written by `sanity schema extract`, which does not format its output.
 studio/schema.json
+
+# Lambda package written by frontend/lambda/build.mjs
+frontend/.lambda

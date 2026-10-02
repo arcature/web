@@ -1,2 +1,5 @@
 # Written by the sanity-redirects integration on every build (redirects.mjs)
 src/generated/
+
+# Lambda package written by lambda/build.mjs
+.lambda/

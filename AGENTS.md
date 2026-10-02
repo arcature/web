@@ -142,9 +142,14 @@ fails without it). Production never gets it.
 - **Hosting**: `@astrojs/node` (standalone) for both stages.
   `frontend/lambda/server/handler.mjs` wraps it with `serverless-http`; on QA it
   also sends `no-store` and `noindex`. Production makes no Sanity requests at
-  runtime: pages and the 404 page are prerendered files. It must stay in a folder named `server`: the adapter finds static files
-  by walking up to `server/` and looking for `../client`, and `sst.config.ts`
-  copies `dist/client` to `lambda/client`.
+  runtime: pages and the 404 page are prerendered files. `npm run build` ends with
+  `frontend/lambda/build.mjs`, which packages `frontend/.lambda/` (gitignored)
+  and `sst.config.ts` deploys that folder as is (`bundle`), not bundled by SST.
+  The adapter finds static files by walking up from its own file to a folder
+  named `server` and looking for `../client`; SST's bundler flattens
+  everything into `bundle.mjs`, which breaks that, so the package keeps
+  `server/handler.mjs` beside `client/` (a copy of `dist/client`) with
+  `index.mjs` re-exporting the handler at the root.
 
 ## Environment
 

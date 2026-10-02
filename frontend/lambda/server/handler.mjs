@@ -3,8 +3,8 @@
 // and assets) and renders anything else.
 //
 // The adapter finds the static files by walking up to a folder named "server"
-// and looking for "../client", so this file lives in lambda/server/ and
-// sst.config.ts copies dist/client to lambda/client.
+// and looking for "../client". lambda/build.mjs bundles this file into
+// .lambda/server/ and copies dist/client to .lambda/client to match.
 import serverless from 'serverless-http';
 
 import { handler as astro } from '../../dist/server/entry.mjs';
