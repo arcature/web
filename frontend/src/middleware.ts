@@ -1,4 +1,5 @@
-import { defineMiddleware } from 'astro:middleware';
+import { PUBLIC_SANITY_STUDIO_URL } from 'astro:env/client';
+import { defineMiddleware, sequence } from 'astro:middleware';
 
 import generated from './generated/redirects.json';
 import {
@@ -10,8 +11,12 @@ import {
   redirectTable,
 } from './lib/redirects';
 import { canReadDrafts, client, draftClient } from './lib/sanity';
+import { frameAncestors, wantsStega } from './lib/stega';
 
 /**
+ * On QA and in dev, decides whether a request gets stega (only inside
+ * Presentation; see src/lib/stega.ts) and lets only the Studio frame pages.
+ *
  * Answers the redirects kept in Sanity.
  *
  * - Production uses the list the sanity-redirects integration (redirects.mjs)
@@ -34,11 +39,9 @@ async function currentTable() {
     return builtTable;
   }
 
-  // Drafts when they can be read. Stega off: it would corrupt the paths.
+  // Drafts when they can be read, without stega, which would corrupt paths.
   const rules = await (canReadDrafts ? draftClient() : client).fetch(
     redirectsQuery,
-    {},
-    { stega: false },
   );
   const { redirects, skipped } = compileRedirects(rules);
   for (const message of skipped) {
@@ -48,7 +51,29 @@ async function currentTable() {
   return redirectTable(redirects);
 }
 
-export const onRequest = defineMiddleware(async (context, next) => {
+const framing = frameAncestors(PUBLIC_SANITY_STUDIO_URL);
+
+/** QA and dev only: stega inside Presentation, and only the Studio may frame. */
+const preview = defineMiddleware(async (context, next) => {
+  if (!live || context.isPrerendered) {
+    return next();
+  }
+
+  context.locals.stega = wantsStega(context.request.headers, context.url);
+
+  const response = await next();
+  try {
+    response.headers.set('Content-Security-Policy', framing);
+    return response;
+  } catch {
+    // Some responses have immutable headers; copy those first.
+    const copy = new Response(response.body, response);
+    copy.headers.set('Content-Security-Policy', framing);
+    return copy;
+  }
+});
+
+const redirects = defineMiddleware(async (context, next) => {
   const { request, url } = context;
 
   if (
@@ -74,3 +99,5 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // QA and dev never cache: their redirects can change at any time.
   return rule ? redirectResponse(rule, url, !live) : next();
 });
+
+export const onRequest = sequence(preview, redirects);

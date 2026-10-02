@@ -88,7 +88,9 @@ Headings are rendered in title case by CSS, so type them in sentence case.
 To release, merge `main` into `production`.
 
 QA also serves as the preview for Presentation: it always shows draft content,
-with click-to-edit overlays when it's opened in Presentation. Anyone who can
+with click-to-edit overlays when it's opened in Presentation. Only there does
+it add Sanity's invisible click-to-edit markers, which can nudge headings; the
+site opened directly and the Studio's Preview tab render without them. Anyone who can
 reach the QA URL sees unpublished drafts, so keep it private if that matters
 (for example with a CloudFront Function, `VIEWER_REQUEST_FUNCTION_ARN`).
 

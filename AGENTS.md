@@ -110,9 +110,14 @@ fails without it). Production never gets it.
   inline integration in `frontend/astro.config.mjs` turn off prerendering for
   every route. Without it, everything is prerendered.
 - **Drafts and Presentation**: there's no draft mode. QA builds always fetch
-  drafts with stega and always include `VisualEditing.astro`
-  (`enableVisualEditing`, which does nothing outside Presentation), and are
-  always `noindex` with a disallowing `robots.txt`. The overlay reloads the
+  drafts and always include `VisualEditing.astro` (`enableVisualEditing`,
+  which does nothing outside Presentation), and are always `noindex` with a
+  disallowing `robots.txt`. Stega is per request (`src/lib/stega.ts`, set on
+  `Astro.locals` by the middleware): only when `Sec-Fetch-Dest: iframe` and the
+  URL lacks the Preview tab's `?view=preview` (`shared/preview.ts`), because
+  its invisible characters take letter spacing and shift headings. QA and dev
+  responses send `Content-Security-Policy: frame-ancestors` for the Studio and
+  `localhost:3333`, so nothing else can frame them. The overlay reloads the
   page on edits and syncs Presentation's address bar (history adapter).
 - **Routes**: `shared/routes.ts` (a plain folder, imported by the Studio and the
   frontend) holds the one copy of where content lives: `fixedPages` (singleton

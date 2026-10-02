@@ -3,7 +3,10 @@ import Sections from '../components/Sections.astro';
 import Layout from '../layouts/Layout.astro';
 import { getHome, getSite } from '../lib/content';
 
-const [site, home] = await Promise.all([getSite(), getHome()]);
+const [site, home] = await Promise.all([
+  getSite(Astro.locals),
+  getHome(Astro.locals),
+]);
 const { sections } = home;
 const endsWithCta = sections.at(-1)?._type === 'cta';
 ---

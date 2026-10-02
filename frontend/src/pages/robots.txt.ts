@@ -2,8 +2,8 @@ import type { APIRoute } from 'astro';
 
 import { getSite } from '../lib/content';
 
-export const GET: APIRoute = async () => {
-  const site = await getSite();
+export const GET: APIRoute = async ({ locals }) => {
+  const site = await getSite(locals);
   // QA shows drafts, so it's never crawled, whatever Site settings say.
   const hidden = site.noIndex || Boolean(import.meta.env.SANITY_PREVIEW);
   const rule = hidden ? 'Disallow: /' : 'Allow: /';

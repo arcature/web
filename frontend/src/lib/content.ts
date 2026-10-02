@@ -15,18 +15,22 @@ export type SectionOf<K extends Section['_type']> = Omit<
   '_type' | '_key'
 >;
 
-// QA and local dev show drafts, with stega for Presentation's click-to-edit;
-// production (prerendered) gets published content.
+// QA and local dev show drafts; production (prerendered) gets published
+// content. Stega is added per request, inside Presentation only (see
+// src/lib/stega.ts), via `Astro.locals`.
 if (import.meta.env.DEV && !canReadDrafts) {
   console.warn(
     '[content] SANITY_API_READ_TOKEN is not set, so dev shows published content only.',
   );
 }
 
-const contentClient = showDrafts ? draftClient() : client;
+type ContentOptions = Pick<App.Locals, 'stega'>;
 
-export async function getSite(): Promise<Site> {
-  const site = await contentClient.fetch(siteQuery);
+const clientFor = ({ stega }: ContentOptions) =>
+  showDrafts ? draftClient(Boolean(stega)) : client;
+
+export async function getSite(options: ContentOptions = {}): Promise<Site> {
+  const site = await clientFor(options).fetch(siteQuery);
 
   if (!site) {
     throw new Error('Missing the "siteSettings" document in Sanity');
@@ -35,8 +39,8 @@ export async function getSite(): Promise<Site> {
   return site;
 }
 
-export async function getHome(): Promise<Home> {
-  const home = await contentClient.fetch(homeQuery);
+export async function getHome(options: ContentOptions = {}): Promise<Home> {
+  const home = await clientFor(options).fetch(homeQuery);
 
   if (!home) {
     throw new Error('Missing the "homePage" document in Sanity');
@@ -45,8 +49,10 @@ export async function getHome(): Promise<Home> {
   return home;
 }
 
-export async function getNotFound(): Promise<NotFound> {
-  const notFound = await contentClient.fetch(notFoundQuery);
+export async function getNotFound(
+  options: ContentOptions = {},
+): Promise<NotFound> {
+  const notFound = await clientFor(options).fetch(notFoundQuery);
 
   if (!notFound) {
     throw new Error('Missing the "notFoundPage" document in Sanity');

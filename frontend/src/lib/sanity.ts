@@ -17,12 +17,13 @@ export const client = createClient({
 /** Whether drafts can be read at all (QA, and local dev with a token in .env). */
 export const canReadDrafts = Boolean(SANITY_API_READ_TOKEN);
 
-export const draftClient = () =>
+/** Drafts, with stega (click-to-edit markers) only when asked for. */
+export const draftClient = (stega = false) =>
   client.withConfig({
     token: SANITY_API_READ_TOKEN,
     perspective: 'drafts',
     stega: {
-      enabled: true,
+      enabled: stega,
       studioUrl: PUBLIC_SANITY_STUDIO_URL,
       // Values used as classes, conditions or URLs must stay clean.
       filter: (props) => {

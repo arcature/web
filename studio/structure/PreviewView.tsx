@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntentLink } from 'sanity/router';
 import type { UserViewComponent } from 'sanity/structure';
 
+import { PREVIEW_TAB_PARAM, PREVIEW_TAB_VALUE } from '../../shared/preview';
 import type { DocumentPathRef } from '../../shared/routes';
 import { previewPath } from '../presentation/previewPath';
 import { previewUrl } from '../presentation/previewUrl';
@@ -23,6 +24,16 @@ const RELOAD_DELAY_MS = 1500;
 const MOBILE_WIDTH = 375;
 
 type Viewport = 'desktop' | 'mobile';
+
+/**
+ * The page's URL, marked as the Preview tab so QA renders it without stega:
+ * nothing here is click-to-edit, and stega shifts text with letter spacing.
+ */
+function previewSrc(path: string) {
+  const url = new URL(path, previewUrl);
+  url.searchParams.set(PREVIEW_TAB_PARAM, PREVIEW_TAB_VALUE);
+  return url.toString();
+}
 
 /**
  * The Preview tab on a document: the page it's shown on, from the QA site
@@ -42,8 +53,7 @@ export const PreviewView: UserViewComponent = ({
   const frame = useRef<HTMLIFrameElement>(null);
 
   const path = previewPath(displayed as DocumentPathRef);
-  const src =
-    typeof path === 'string' ? new URL(path, previewUrl).toString() : undefined;
+  const src = typeof path === 'string' ? previewSrc(path) : undefined;
 
   useEffect(() => {
     if (src) {
