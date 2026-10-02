@@ -63,8 +63,10 @@ it doesn't. Sanity's own webhooks aren't used. `deploy-studio.yml` deploys the
 Studio on pushes to `main` that touch `studio/`.
 
 GitHub variable and secret names are listed in the README's one-time setup.
-The QA stage's Sanity read token is an SST secret (`SanityReadToken`), not a
-GitHub one.
+The QA stage's Sanity read token is the `qa` environment's
+`SANITY_API_READ_TOKEN` secret: `deploy.yml` passes it to `sst deploy`, and
+`sst.config.ts` sets it as the QA Lambda's environment variable (the QA deploy
+fails without it). Production never gets it.
 
 ## Architecture
 

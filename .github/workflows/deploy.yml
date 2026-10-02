@@ -77,3 +77,6 @@ jobs:
       - name: Deploy
         working-directory: frontend
         run: npx sst deploy --stage ${{ inputs.stage }}
+        env:
+          # Set on the qa environment only; becomes the QA Lambda's env var.
+          SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}

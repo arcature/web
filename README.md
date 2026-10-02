@@ -109,20 +109,19 @@ build log if an image is missing on the site.
 2. **GitHub.** Under _Settings → Environments_, create `qa` and
    `production`, then add (all workflows use these names):
 
-   | Name                                            | Kind                                      | Value                                                  |
-   | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------ |
-   | `SANITY_PROJECT_ID`                             | Repository variable                       | `t88ezwbe`                                             |
-   | `SANITY_DATASET`                                | Repository variable                       | `production`                                           |
-   | `SANITY_STUDIO_URL`                             | Repository variable                       | `https://arcature.sanity.studio`                       |
-   | `SANITY_STUDIO_PREVIEW_URL`                     | Repository variable                       | The QA URL                                             |
-   | `SITE_DOMAIN`                                   | Environment variable (`qa`, `production`) | Each stage's domain, once chosen                       |
-   | `SANITY_AUTH_TOKEN`                             | Repository secret                         | The Deploy Studio token                                |
-   | `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` | Repository secret                         | `openssl rand -hex 64`, same value as in `studio/.env` |
-   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`    | Repository secrets                        | Already set                                            |
+   | Name                                            | Kind                                      | Value                                                               |
+   | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------- |
+   | `SANITY_PROJECT_ID`                             | Repository variable                       | `t88ezwbe`                                                          |
+   | `SANITY_DATASET`                                | Repository variable                       | `production`                                                        |
+   | `SANITY_STUDIO_URL`                             | Repository variable                       | `https://arcature.sanity.studio`                                    |
+   | `SANITY_STUDIO_PREVIEW_URL`                     | Repository variable                       | The QA URL                                                          |
+   | `SITE_DOMAIN`                                   | Environment variable (`qa`, `production`) | Each stage's domain, once chosen                                    |
+   | `SANITY_API_READ_TOKEN`                         | Environment secret (`qa` only)            | The QA Viewer token; `gh secret set SANITY_API_READ_TOKEN --env qa` |
+   | `SANITY_AUTH_TOKEN`                             | Repository secret                         | The Deploy Studio token                                             |
+   | `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` | Repository secret                         | `openssl rand -hex 64`, same value as in `studio/.env`              |
+   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`    | Repository secrets                        | Already set                                                         |
 
-3. **QA secret.** Store the Viewer token for the QA stage:
-   `npx sst secret set SanityReadToken <token> --stage qa` (from `frontend/`).
-4. **Deploy button.** Content reaches the sites when an editor presses the
+3. **Deploy button.** Content reaches the sites when an editor presses the
    button in the Studio's **Deploy** tool (`sanity-plugin-webhooks-trigger`).
    With `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` set, so the token is
    stored encrypted, add a webhook there:

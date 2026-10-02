@@ -25,13 +25,19 @@ export default $config({
   async run() {
     const isProduction = $app.stage === 'production';
 
-    // Drafts are only ever shown on QA, so only QA can read them.
-    const preview: Record<string, $util.Input<string>> = isProduction
+    // Drafts are only ever shown on QA, so only QA can read them. The token is
+    // the qa GitHub environment's SANITY_API_READ_TOKEN secret, passed to
+    // `sst deploy` by .github/workflows/deploy.yml.
+    const readToken = process.env.SANITY_API_READ_TOKEN;
+    if (!isProduction && !readToken) {
+      throw new Error(
+        'SANITY_API_READ_TOKEN must be set to deploy QA (a Sanity Viewer token).',
+      );
+    }
+
+    const preview: Record<string, string> = isProduction
       ? {}
-      : {
-          SANITY_PREVIEW: 'true',
-          SANITY_API_READ_TOKEN: new sst.Secret('SanityReadToken').value,
-        };
+      : { SANITY_PREVIEW: 'true', SANITY_API_READ_TOKEN: readToken! };
 
     // See lambda/server/handler.mjs for why dist/client is copied to lambda/client.
     const server = new sst.aws.Function('Server', {
