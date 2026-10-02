@@ -21,16 +21,26 @@ export function wantsStega(headers: Headers, url: URL): boolean {
 const LOCAL_STUDIO = 'http://localhost:3333';
 
 /**
- * The Content-Security-Policy that lets only the Studio (deployed or local)
- * frame the page, since QA shows unpublished drafts.
+ * Sanity's dashboard, which can host the Studio in a frame of its own.
+ * `frame-ancestors` checks every frame up the chain, not just the parent, so
+ * Presentation opened through it needs these too.
+ */
+const SANITY_DASHBOARD = ['https://sanity.io', 'https://*.sanity.io'];
+
+/**
+ * The Content-Security-Policy that lets only the Studio (deployed, local, or
+ * inside Sanity's dashboard) frame the page, since QA shows unpublished
+ * drafts.
  */
 export function frameAncestors(studioUrl: string): string {
   let deployed = '';
   try {
     deployed = new URL(studioUrl).origin;
   } catch {
-    // No usable Studio URL: only the local Studio may frame the page.
+    // No usable Studio URL: only the local Studio and the dashboard remain.
   }
 
-  return ['frame-ancestors', deployed, LOCAL_STUDIO].filter(Boolean).join(' ');
+  return ['frame-ancestors', deployed, LOCAL_STUDIO, ...SANITY_DASHBOARD]
+    .filter(Boolean)
+    .join(' ');
 }

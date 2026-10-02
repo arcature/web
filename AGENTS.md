@@ -116,8 +116,10 @@ fails without it). Production never gets it.
   `Astro.locals` by the middleware): only when `Sec-Fetch-Dest: iframe` and the
   URL lacks the Preview tab's `?view=preview` (`shared/preview.ts`), because
   its invisible characters take letter spacing and shift headings. QA and dev
-  responses send `Content-Security-Policy: frame-ancestors` for the Studio and
-  `localhost:3333`, so nothing else can frame them. The overlay reloads the
+  responses send `Content-Security-Policy: frame-ancestors` for the Studio,
+  `localhost:3333` and Sanity's dashboard (`sanity.io`, `*.sanity.io`, which
+  can host the Studio in its own frame; every ancestor must be allowed), so
+  nothing else can frame them. The overlay reloads the
   page on edits and syncs Presentation's address bar (history adapter).
 - **Routes**: `shared/routes.ts` (a plain folder, imported by the Studio and the
   frontend) holds the one copy of where content lives: `fixedPages` (singleton

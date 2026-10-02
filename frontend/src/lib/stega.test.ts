@@ -29,16 +29,20 @@ describe('wantsStega', () => {
 });
 
 describe('frameAncestors', () => {
-  it('allows the deployed Studio and the local one', () => {
+  const dashboard = 'https://sanity.io https://*.sanity.io';
+
+  it('allows the deployed Studio, the local one and Sanity’s dashboard', () => {
     expect(frameAncestors('https://arcature.sanity.studio/some/path')).toBe(
-      'frame-ancestors https://arcature.sanity.studio http://localhost:3333',
+      `frame-ancestors https://arcature.sanity.studio http://localhost:3333 ${dashboard}`,
     );
   });
 
-  it('falls back to the local Studio for a missing or invalid URL', () => {
-    expect(frameAncestors('')).toBe('frame-ancestors http://localhost:3333');
+  it('drops a missing or invalid Studio URL', () => {
+    expect(frameAncestors('')).toBe(
+      `frame-ancestors http://localhost:3333 ${dashboard}`,
+    );
     expect(frameAncestors('not a url')).toBe(
-      'frame-ancestors http://localhost:3333',
+      `frame-ancestors http://localhost:3333 ${dashboard}`,
     );
   });
 });
