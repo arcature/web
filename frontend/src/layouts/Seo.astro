@@ -1,0 +1,104 @@
+---
+/**
+ * The SEO and social tags in `<head>`, after FK Kit's layouts/Seo.astro. Page
+ * values win; anything a page leaves out falls back to Site settings.
+ */
+import { stegaClean } from '@sanity/client/stega';
+
+import type { Site } from '../lib/content';
+import { resolveImage, socialImageUrl } from '../lib/images';
+import { twitterUsername } from '../lib/social';
+
+interface Props {
+  site: Site;
+  /** Page title; the site title is appended. Leave out on the home page. */
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  noIndex?: boolean;
+  /** Absolute URL of a page-specific social image. */
+  image?: string;
+  imageAlt?: string;
+  ogType?: string;
+  /** Showing drafts inside Sanity's Presentation tool; never indexed. */
+  draftMode?: boolean;
+}
+
+// In draft mode values carry stega characters for click-to-edit. Nothing in
+// <head> is clickable, so strip them, and do it before the fallbacks below: an
+// encoded empty string isn't empty and would win a fallback it should lose.
+const {
+  site: rawSite,
+  title: pageTitle,
+  description: pageDescription,
+  keywords: pageKeywords,
+  noIndex: pageNoIndex,
+  image: pageImage,
+  imageAlt: pageImageAlt,
+  ogType = 'website',
+  draftMode = false,
+} = stegaClean(Astro.props);
+const site = stegaClean(rawSite);
+
+const siteTitle = site.title || undefined;
+const withSiteTitle = (title: string) =>
+  siteTitle ? `${title} | ${siteTitle}` : title;
+
+const title = pageTitle
+  ? withSiteTitle(pageTitle)
+  : site.seoTitle || siteTitle || '';
+const description = pageDescription || site.seoDescription || undefined;
+const keywords = pageKeywords?.length ? pageKeywords : site.seoKeywords;
+const noIndex = draftMode || (pageNoIndex ?? site.noIndex ?? false);
+
+const socialTitle = pageTitle
+  ? withSiteTitle(pageTitle)
+  : site.socialTitle || site.seoTitle || siteTitle || title;
+const socialDescription =
+  pageDescription || site.socialDescription || description;
+
+// Canonical, og:url and og:image must be absolute. Prerendered pages only know
+// their URL when `site` is set (from SITE_DOMAIN), so without it they're left out.
+const origin =
+  Astro.site ?? (Astro.isPrerendered ? undefined : new URL(Astro.url.origin));
+const absolute = (path: string) =>
+  origin ? new URL(path, origin).toString() : undefined;
+
+const canonicalUrl = absolute(Astro.url.pathname);
+const siteImage = resolveImage(site.socialImage);
+const socialImage =
+  pageImage ??
+  (siteImage
+    ? absolute(await socialImageUrl(siteImage, Astro.isPrerendered))
+    : undefined);
+const socialImageAlt = pageImageAlt || site.socialImageAlt || undefined;
+const twitterHandle = twitterUsername(site.socialProfiles);
+---
+
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+{keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content={ogType} />
+{canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+<meta property="og:title" content={socialTitle} />
+{socialDescription && (
+  <meta property="og:description" content={socialDescription} />
+)}
+{siteTitle && <meta property="og:site_name" content={siteTitle} />}
+{socialImage && <meta property="og:image" content={socialImage} />}
+{socialImage && socialImageAlt && (
+  <meta property="og:image:alt" content={socialImageAlt} />
+)}
+
+{socialImage && (
+  <>
+    <meta name="twitter:card" content="summary_large_image" />
+    {socialImageAlt && (
+      <meta name="twitter:image:alt" content={socialImageAlt} />
+    )}
+  </>
+)}
+{twitterHandle && <meta name="twitter:site" content={`@${twitterHandle}`} />}

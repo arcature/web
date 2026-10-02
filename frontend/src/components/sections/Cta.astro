@@ -1,0 +1,31 @@
+---
+import type { SectionOf } from '../../lib/content';
+import Button from '../Button.astro';
+
+type Props = SectionOf<'cta'> & { isFirst?: boolean };
+
+const { heading, body, cta, isFirst = false } = Astro.props;
+const Heading = isFirst ? 'h1' : 'h2';
+---
+
+<!-- Content is positioned so it paints above the footer artwork that rises into this section. -->
+<section id="demo" class="on-dark bg-ink text-paper">
+  <div class="relative z-10">
+    <div
+      class="grid h-12 grid-cols-2 border-b border-line-dark md:h-20"
+      aria-hidden="true"
+    >
+      <div class="border-r border-line-dark"></div>
+    </div>
+    <div class="flex flex-col items-center border-b border-line-dark px-4 py-16 text-center md:min-h-[415px]">
+      <Heading class="text-headline max-w-[706px] capitalize">
+        {heading}
+      </Heading>
+      <p class="mt-8 max-w-[534px] text-lg leading-[1.2]">{body}</p>
+      <Button {...cta} variant="light" class="mt-6" />
+    </div>
+    <div class="grid h-12 grid-cols-2 md:h-20" aria-hidden="true">
+      <div class="border-r border-line-dark"></div>
+    </div>
+  </div>
+</section>

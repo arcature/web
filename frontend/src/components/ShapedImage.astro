@@ -1,0 +1,84 @@
+---
+/**
+ * Renders a CMS image cropped into a fixed vector shape from the design, so
+ * editors can swap the photo without breaking the art direction.
+ */
+import { type CmsImage, imageUrl } from '../lib/images';
+
+interface Props {
+  image: CmsImage | undefined;
+  alt: string;
+  /** Shape outline in the viewBox coordinate space. */
+  path: string;
+  width: number;
+  height: number;
+  /** Optional duotone tint (Figma "color" + "overlay" fills). */
+  tint?: string;
+  /** CSS filter approximating Figma's image adjustments. */
+  filter?: string;
+  /** Rendered width used to pick the optimized image size. */
+  renderWidth?: number;
+  class?: string;
+}
+
+const {
+  image,
+  alt,
+  path,
+  width,
+  height,
+  tint,
+  filter,
+  renderWidth = width,
+  class: className,
+} = Astro.props;
+
+const clipId = `clip-${Math.random().toString(36).slice(2, 9)}`;
+const href = image
+  ? await imageUrl(image, renderWidth * 2, Astro.isPrerendered)
+  : undefined;
+---
+
+<svg
+  viewBox={`0 0 ${width} ${height}`}
+  class:list={['block h-auto w-full', className]}
+  role={alt ? 'img' : undefined}
+  aria-label={alt || undefined}
+  aria-hidden={alt ? undefined : 'true'}
+  preserveAspectRatio="xMidYMid meet"
+>
+  <defs>
+    <clipPath id={clipId}>
+      <path d={path}></path>
+    </clipPath>
+  </defs>
+  <g clip-path={`url(#${clipId})`} style="isolation: isolate">
+    {href ? (
+      <image
+        href={href}
+        width={width}
+        height={height}
+        preserveAspectRatio="xMidYMid slice"
+        style={filter ? `filter: ${filter}` : undefined}
+      />
+    ) : (
+      <rect width={width} height={height} fill="currentColor" />
+    )}
+    {tint && (
+      <>
+        <rect
+          width={width}
+          height={height}
+          fill={tint}
+          style="mix-blend-mode: color"
+        />
+        <rect
+          width={width}
+          height={height}
+          fill={tint}
+          style="mix-blend-mode: overlay"
+        />
+      </>
+    )}
+  </g>
+</svg>

@@ -1,0 +1,54 @@
+name: Deploy Sanity Studio
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/deploy-studio.yml'
+      - 'studio/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  sanity-deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Sanity
+
+    concurrency:
+      group: deploy-studio-check
+      cancel-in-progress: false
+
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
+      SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
+      SANITY_STUDIO_DATASET: ${{ vars.SANITY_DATASET }}
+      SANITY_STUDIO_PREVIEW_URL: ${{ vars.SANITY_STUDIO_PREVIEW_URL }}
+      SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT: ${{ secrets.SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        id: setup-node
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - uses: actions/cache@v6
+        id: node-dep-cache
+        with:
+          path: '**/node_modules'
+          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-node.outputs.node-version}}-${{ hashFiles('**/package*.json') }}
+
+      - run: npm ci --include=dev
+        if: steps.node-dep-cache.outputs.cache-hit != 'true'
+
+      - run: npx sanity schema validate
+        working-directory: ./studio
+
+      - run: npx sanity deploy
+        working-directory: ./studio
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}

@@ -1,0 +1,23 @@
+---
+/**
+ * Click-to-edit overlays for Sanity's Presentation tool. Only rendered in
+ * draft mode, which only exists on the QA stage.
+ */
+---
+
+<script>
+  import { enableVisualEditing } from '@sanity/visual-editing';
+
+  enableVisualEditing({
+    // Pages are rendered on the server, so show edits by reloading.
+    refresh: (payload) => {
+      if (payload.source === 'manual' || payload.source === 'mutation') {
+        window.location.reload();
+
+        return new Promise(() => {});
+      }
+
+      return false;
+    },
+  });
+</script>

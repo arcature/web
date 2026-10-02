@@ -1,0 +1,14 @@
+---
+import Sections from '../components/Sections.astro';
+import Layout from '../layouts/Layout.astro';
+import { getHome, getSite } from '../lib/content';
+import { isDraftMode } from '../lib/sanity';
+
+const [site, home] = await Promise.all([getSite(Astro), getHome(Astro)]);
+const { sections } = home;
+const endsWithCta = sections.at(-1)?._type === 'cta';
+---
+
+<Layout site={site} footerOverlap={endsWithCta} draftMode={isDraftMode(Astro)}>
+  <Sections sections={sections} />
+</Layout>

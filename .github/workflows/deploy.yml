@@ -1,0 +1,79 @@
+# Build the Astro site and deploy one SST stage to AWS (see frontend/sst.config.ts).
+# Called by qa.yml and production.yml.
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        description: SST stage, also the name of the GitHub environment holding its settings
+        required: true
+        type: string
+      preview:
+        description: Render every page on request so Sanity's Presentation tool can show drafts
+        required: false
+        type: boolean
+        default: false
+      ref:
+        description: Git ref to deploy (defaults to the ref that triggered the caller)
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Per-stage variables (e.g. SITE_DOMAIN) live in the GitHub environment named after the stage.
+    environment: ${{ inputs.stage }}
+
+    # One deploy per stage at a time, skipping runs queued between the run in progress and the latest queued.
+    # However, do NOT cancel in-progress runs as we want to allow these deployments to complete.
+    concurrency:
+      group: deploy-${{ inputs.stage }}
+      cancel-in-progress: false
+
+    env:
+      PUBLIC_SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
+      PUBLIC_SANITY_DATASET: ${{ vars.SANITY_DATASET }}
+      PUBLIC_SANITY_STUDIO_URL: ${{ vars.SANITY_STUDIO_URL }}
+      SANITY_PREVIEW: ${{ inputs.preview }}
+      SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        id: setup-node
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Cache dependencies
+        uses: actions/cache@v6
+        id: node-dep-cache
+        with:
+          path: '**/node_modules'
+          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('**/package*.json') }}
+
+      - name: Install dependencies
+        if: steps.node-dep-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'us-east-1'
+
+      - name: Deploy
+        working-directory: frontend
+        run: npx sst deploy --stage ${{ inputs.stage }}

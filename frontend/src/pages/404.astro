@@ -1,0 +1,28 @@
+---
+/**
+ * The 404 page. Its content is the "404 page" document in Sanity. Production
+ * serves the prerendered 404.html for any missing path (errorPage in
+ * sst.config.ts); QA renders it on request.
+ */
+import Sections from '../components/Sections.astro';
+import Layout from '../layouts/Layout.astro';
+import { getNotFound, getSite } from '../lib/content';
+import { isDraftMode } from '../lib/sanity';
+
+const [site, notFound] = await Promise.all([
+  getSite(Astro),
+  getNotFound(Astro),
+]);
+const { sections } = notFound;
+const endsWithCta = sections.at(-1)?._type === 'cta';
+---
+
+<Layout
+  site={site}
+  title={notFound.title ?? 'Page not found'}
+  noIndex
+  footerOverlap={endsWithCta}
+  draftMode={isDraftMode(Astro)}
+>
+  <Sections sections={sections} />
+</Layout>

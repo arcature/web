@@ -1,0 +1,49 @@
+---
+/**
+ * A Sanity image. Prerendered pages optimize it into the build output with
+ * Astro's <Image>; pages rendered on request (preview) use Sanity's CDN.
+ */
+import { Image } from 'astro:assets';
+
+import { type CmsImage, sanityImageUrl } from '../lib/images';
+
+interface Props {
+  image: CmsImage;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+}
+
+const { image, alt, widths, sizes, class: className } = Astro.props;
+const srcset = widths
+  ?.map(
+    (width) =>
+      `${sanityImageUrl(image, width)} ${Math.min(width, image.width)}w`,
+  )
+  .join(', ');
+---
+
+{Astro.isPrerendered ? (
+  <Image
+    src={image.src}
+    width={image.width}
+    height={image.height}
+    alt={alt}
+    widths={widths}
+    sizes={sizes}
+    class={className}
+  />
+) : (
+  <img
+    src={sanityImageUrl(image, image.width)}
+    srcset={srcset}
+    sizes={sizes}
+    width={image.width}
+    height={image.height}
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    class={className}
+  />
+)}

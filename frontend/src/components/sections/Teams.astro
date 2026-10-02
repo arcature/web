@@ -1,0 +1,32 @@
+---
+import { accentBg } from '../../lib/accent';
+import type { SectionOf } from '../../lib/content';
+
+type Props = SectionOf<'teams'>;
+
+const { heading, accent, items } = Astro.props;
+---
+
+<section class="grid md:grid-cols-2">
+  <div
+    class:list={[
+      'px-4 py-12 text-paper md:px-16 md:pt-9',
+      accent && accentBg[accent],
+    ]}
+  >
+    <h2 class="text-display max-w-[451px] capitalize">{heading}</h2>
+  </div>
+  <ol class="grid bg-mist sm:grid-cols-2">
+    {items.map((item, index) => (
+      <li class="flex min-h-[240px] flex-col justify-between gap-12 px-4 py-8 md:min-h-[392px] md:px-8">
+        <span class="text-title" aria-hidden="true">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <div>
+          <h3 class="text-title">{item.title}</h3>
+          <p class="mt-4 max-w-[296px] text-lg leading-[1.2]">{item.body}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>

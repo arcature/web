@@ -1,0 +1,43 @@
+---
+import { accentBg, accentCycle } from '../../lib/accent';
+import type { SectionOf } from '../../lib/content';
+import Button from '../Button.astro';
+
+type Props = SectionOf<'stats'>;
+
+const { heading, body, cta, stats } = Astro.props;
+---
+
+<section class="grid border-y border-line bg-paper md:min-h-[725px] md:grid-cols-2">
+  <div class="flex flex-col justify-between gap-16 px-4 py-12 md:px-16 md:py-16">
+    <h2 class="text-display max-w-[592px] capitalize">{heading}</h2>
+    <div>
+      <p class="max-w-[592px] text-lg leading-[1.2]">{body}</p>
+      <Button {...cta} class="mt-6" />
+    </div>
+  </div>
+
+  <dl
+    class="grid min-h-[420px] border-t border-line md:border-t-0"
+    style={`grid-template-columns: repeat(${Math.max(stats.length, 1)}, minmax(0, 1fr))`}
+  >
+    {stats.map((stat, index) => (
+      <div class="relative flex flex-col border-l border-line first:max-md:border-l-0">
+        <div class="px-4 pt-8 md:px-8 md:pt-16">
+          <dt class="text-base leading-[1.2]">{stat.label}</dt>
+          <dd class="mt-3 text-[clamp(2rem,1.5rem+1.4vw,3rem)] leading-[1.05]">
+            {stat.value}
+          </dd>
+        </div>
+        <div
+          aria-hidden="true"
+          class:list={[
+            'mt-auto',
+            accentBg[accentCycle[index % accentCycle.length]],
+          ]}
+          style={`height: ${Math.min(Math.max(stat.bar ?? 0, 0), 100)}%`}
+        />
+      </div>
+    ))}
+  </dl>
+</section>

@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter-tight';
+
+/*
+ * Design tokens from the Figma file. The design uses "FT System"; Inter Tight
+ * stands in until a web license is available — swap --font-sans to change it.
+ */
+@theme {
+  --font-sans: 'Inter Tight Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #060607;
+  --color-paper: #fbfbfb;
+  --color-mist: #e8e8e8;
+  --color-line: #d7d7d7;
+  --color-line-dark: rgb(251 251 251 / 0.28);
+  /* Figma uses #8f8f8f for tags; darkened to reach 4.5:1 on paper at 12px. */
+  --color-muted: #6b6b6b;
+  --color-red: #923d33;
+  --color-blue: #1e5e7a;
+  --color-olive: #676f49;
+
+  --text-display: clamp(2.5rem, 1.4rem + 3.6vw, 4.5rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 500;
+  --text-headline: clamp(2.25rem, 1.5rem + 2.4vw, 3.625rem);
+  --text-headline--line-height: 1.05;
+  --text-headline--letter-spacing: -0.02em;
+  --text-headline--font-weight: 500;
+  --text-title: clamp(1.5rem, 1.1rem + 1.2vw, 2.25rem);
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.01em;
+  --text-title--font-weight: 500;
+  --text-statement: clamp(1.5rem, 1.1rem + 1.2vw, 2.25rem);
+  --text-statement--line-height: 1.2;
+  --text-statement--letter-spacing: -0.01em;
+  --text-statement--font-weight: 500;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  /* Two-tone ring stays ≥3:1 on both light and dark surfaces. */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--color-paper);
+  }
+
+  .on-dark :focus-visible {
+    outline-color: var(--color-paper);
+    box-shadow: 0 0 0 2px var(--color-ink);
+  }
+}
+
+@utility label {
+  font-size: 0.875rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}

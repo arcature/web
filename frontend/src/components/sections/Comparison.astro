@@ -1,0 +1,64 @@
+---
+import type { SectionOf } from '../../lib/content';
+
+type Props = SectionOf<'comparison'>;
+
+const { before, after } = Astro.props;
+const columns = [
+  { ...before, kind: 'before' as const },
+  { ...after, kind: 'after' as const },
+];
+---
+
+<section class="on-dark bg-ink py-16 text-paper">
+  <div class="grid border-y border-line-dark md:grid-cols-2">
+    {columns.map((column, index) => (
+      <div
+        class:list={[
+          'px-4 pt-8 pb-8 md:px-16',
+          index === 0 && 'border-line-dark max-md:border-b md:border-r',
+        ]}
+      >
+        <h2 class="text-[2rem] leading-[1.05] capitalize">{column.title}</h2>
+        <ul class="mt-8 flex flex-col gap-3">
+          {column.items.map((item) => (
+            <li class="flex items-start gap-3 text-lg leading-[1.2]">
+              {column.kind === 'before' ? (
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                  class="mt-px size-5 shrink-0"
+                >
+                  <rect width="20" height="20" rx="2" class="fill-red" />
+                  <path
+                    d="M7 7l6 6M13 7l-6 6"
+                    stroke="#fbfbfb"
+                    stroke-width="1.75"
+                    stroke-linecap="square"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                  class="mt-px size-5 shrink-0"
+                >
+                  <rect width="20" height="20" rx="2" class="fill-blue" />
+                  <circle
+                    cx="10"
+                    cy="10"
+                    r="3.25"
+                    fill="none"
+                    stroke="#fbfbfb"
+                    stroke-width="1.75"
+                  />
+                </svg>
+              )}
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>

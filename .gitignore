@@ -1,0 +1,13 @@
+dist/
+.astro/
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+npm-debug.log*
+# SST
+.sst/
+
+# Intermediate output of `npm run typegen`
+schema.json

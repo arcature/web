@@ -1,0 +1,57 @@
+---
+/**
+ * A page's CMS sections, in order. Shared by the home page and the 404 page.
+ */
+import type { Section } from '../lib/content';
+import Banner from './sections/Banner.astro';
+import Comparison from './sections/Comparison.astro';
+import Cta from './sections/Cta.astro';
+import Feature from './sections/Feature.astro';
+import Hero from './sections/Hero.astro';
+import Intro from './sections/Intro.astro';
+import Lifecycle from './sections/Lifecycle.astro';
+import Logos from './sections/Logos.astro';
+import Statement from './sections/Statement.astro';
+import Stats from './sections/Stats.astro';
+import Teams from './sections/Teams.astro';
+
+interface Props {
+  sections: Section[];
+}
+
+const { sections } = Astro.props;
+
+// The page's <h1>: the first hero, or failing that the first call to action.
+const firstHero = sections.findIndex((section) => section._type === 'hero');
+const headingIndex =
+  firstHero >= 0
+    ? firstHero
+    : sections.findIndex((section) => section._type === 'cta');
+---
+
+{sections.map((section, index) => {
+  switch (section._type) {
+    case 'hero':
+      return <Hero {...section} isFirst={index === headingIndex} />;
+    case 'logos':
+      return <Logos {...section} />;
+    case 'intro':
+      return <Intro {...section} />;
+    case 'lifecycle':
+      return <Lifecycle {...section} />;
+    case 'banner':
+      return <Banner {...section} />;
+    case 'comparison':
+      return <Comparison {...section} />;
+    case 'teams':
+      return <Teams {...section} />;
+    case 'stats':
+      return <Stats {...section} />;
+    case 'statement':
+      return <Statement {...section} />;
+    case 'feature':
+      return <Feature {...section} />;
+    case 'cta':
+      return <Cta {...section} isFirst={index === headingIndex} />;
+  }
+})}
