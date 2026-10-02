@@ -1,7 +1,9 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
-// Both stages are the Astro Node entry point in a Lambda behind CloudFront,
-// built by .github/workflows/deploy.yml before `sst deploy`:
+// Each stage is the Astro Node entry point in a Lambda, served through its own
+// CloudFront distribution with the Lambda's function URL as the only origin.
+// Every request, assets included, goes to the Lambda. Built by
+// .github/workflows/deploy.yml before `sst deploy`:
 //
 // - production (production branch): `npm run build` prerenders every page, so
 //   the Lambda mostly serves files and never needs Sanity at request time.
@@ -22,9 +24,6 @@ export default $config({
 
   async run() {
     const isProduction = $app.stage === 'production';
-    const router = new sst.aws.Router('Web', {
-      domain: process.env.SITE_DOMAIN || undefined,
-    });
 
     // Drafts are only ever shown on QA, so only QA can read them.
     const preview: Record<string, $util.Input<string>> = isProduction
@@ -35,7 +34,7 @@ export default $config({
         };
 
     // See lambda/server/handler.mjs for why dist/client is copied to lambda/client.
-    new sst.aws.Function('Server', {
+    const server = new sst.aws.Function('Server', {
       handler: 'lambda/server/handler.handler',
       runtime: 'nodejs24.x', // Keep in step with .nvmrc
       memory: '1024 MB',
@@ -43,9 +42,61 @@ export default $config({
       copyFiles: [{ from: 'dist/client', to: 'lambda/client' }],
       nodejs: { esbuild: { external: ['sharp'] } },
       environment: { ASTRO_NODE_AUTOSTART: 'disabled', ...preview },
-      url: { router: { instance: router } },
+      url: true,
     });
 
-    return { url: router.url };
+    // Follows the Lambda's Cache-Control (nothing is cached without one), so
+    // production's prerendered files and 301s can be cached and QA's no-store
+    // responses never are. Query strings are part of the key; cookies aren't,
+    // and only matter on QA, which never caches.
+    const cachePolicy = new aws.cloudfront.CachePolicy('ServerCache', {
+      minTtl: 0,
+      defaultTtl: 0,
+      maxTtl: 31536000,
+      parametersInCacheKeyAndForwardedToOrigin: {
+        cookiesConfig: { cookieBehavior: 'none' },
+        headersConfig: { headerBehavior: 'none' },
+        queryStringsConfig: { queryStringBehavior: 'all' },
+        enableAcceptEncodingBrotli: true,
+        enableAcceptEncodingGzip: true,
+      },
+    });
+
+    const cdn = new sst.aws.Cdn('Web', {
+      domain: process.env.SITE_DOMAIN || undefined,
+      origins: [
+        {
+          originId: 'server',
+          domainName: server.url.apply((url) => new URL(url).host),
+          customOriginConfig: {
+            httpPort: 80,
+            httpsPort: 443,
+            originProtocolPolicy: 'https-only',
+            originSslProtocols: ['TLSv1.2'],
+          },
+        },
+      ],
+      defaultCacheBehavior: {
+        targetOriginId: 'server',
+        viewerProtocolPolicy: 'redirect-to-https',
+        allowedMethods: [
+          'DELETE',
+          'GET',
+          'HEAD',
+          'OPTIONS',
+          'PATCH',
+          'POST',
+          'PUT',
+        ],
+        cachedMethods: ['GET', 'HEAD'],
+        compress: true,
+        cachePolicyId: cachePolicy.id,
+        // AWS managed AllViewerExceptHostHeader: cookies, query strings and
+        // headers reach the Lambda; Host can't, as the function URL needs its own.
+        originRequestPolicyId: 'b689b0a8-53d0-40ab-baf2-68738e2966ac',
+      },
+    });
+
+    return { url: cdn.url, functionUrl: server.url };
   },
 });

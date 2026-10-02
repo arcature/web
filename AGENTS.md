@@ -51,8 +51,11 @@ npm run lint && npm run format:check && npm run check && npm test && npm run bui
 | `production` | `production.yml` | `production` | Fully prerendered; the same Lambda serves the files         |
 
 Both call the reusable `deploy.yml` (build, then `npx sst deploy` from
-`frontend/`), and both are the Astro Node entry point in a Lambda behind an SST
-Router; only QA gets `SANITY_PREVIEW` and the Sanity read token. Release by
+`frontend/`), and both are the Astro Node entry point in a Lambda. Each stage
+has its own CloudFront distribution (`sst.aws.Cdn`, no CloudFront Functions)
+whose only origin is that Lambda's function URL, so every request, assets
+included, goes to the Lambda; CloudFront caches what the Lambda allows. Only QA
+gets `SANITY_PREVIEW` and the Sanity read token. Release by
 merging `main` into `production`. Production also rebuilds on a
 `repository_dispatch` of type `sanity-publish`, sent by the Studio's **Deploy**
 tool (`sanity-plugin-webhooks-trigger`); QA reads content and redirects live, so

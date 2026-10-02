@@ -39,7 +39,9 @@ const sanityPreview = () => ({
 // https://astro.build/config
 export default defineConfig({
   // Absolute URLs for canonical and social tags (see src/layouts/Seo.astro).
-  // SITE_DOMAIN is set per stage in GitHub and is also the SST router's domain.
+  // SITE_DOMAIN is set per stage in GitHub and is also the stage's CloudFront
+  // domain. Requests reach the Lambda with its function URL as the host, so
+  // the public URL has to come from here.
   site: process.env.SITE_DOMAIN
     ? `https://${process.env.SITE_DOMAIN}`
     : undefined,
