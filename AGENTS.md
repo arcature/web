@@ -60,7 +60,9 @@ request, and only that distribution may invoke the function, so the URL can't
 be called directly. Custom domains come from the `SITE_DOMAIN` and
 `SITE_CERT_ARN` GitHub environment variables (DNS outside AWS, `dns: false`);
 set them there, not in the CloudFront console, which the next deploy would
-undo. A POST/PUT through CloudFront must then carry an
+undo. The same goes for an existing CloudFront Function on viewer requests:
+its ARN comes from the `VIEWER_REQUEST_FUNCTION_ARN` environment variable (set
+on `qa`), and SST only manages the association, never the function. A POST/PUT through CloudFront must then carry an
 `x-amz-content-sha256` hash of its body; the site has no such requests yet. Only QA
 gets `SANITY_PREVIEW` and the Sanity read token. Release by
 merging `main` into `production`. Production also rebuilds on a

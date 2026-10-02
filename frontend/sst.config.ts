@@ -93,6 +93,14 @@ export default $config({
       },
     });
 
+    // An existing CloudFront Function to run on viewer requests, by ARN (the
+    // VIEWER_REQUEST_FUNCTION_ARN GitHub environment variable, set on qa only).
+    // The association is part of the distribution, so every deploy keeps it;
+    // the function itself isn't declared here, so SST never changes or
+    // deletes it. It must be published (LIVE) to be attached.
+    const viewerRequestFunction =
+      process.env.VIEWER_REQUEST_FUNCTION_ARN || undefined;
+
     const cdn = new sst.aws.Cdn('Web', {
       domain:
         siteDomain && siteCert
@@ -114,6 +122,14 @@ export default $config({
       defaultCacheBehavior: {
         targetOriginId: 'server',
         viewerProtocolPolicy: 'redirect-to-https',
+        functionAssociations: viewerRequestFunction
+          ? [
+              {
+                eventType: 'viewer-request',
+                functionArn: viewerRequestFunction,
+              },
+            ]
+          : [],
         allowedMethods: [
           'DELETE',
           'GET',

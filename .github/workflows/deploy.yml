@@ -40,6 +40,7 @@ jobs:
       SANITY_PREVIEW: ${{ inputs.preview }}
       SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
       SITE_CERT_ARN: ${{ vars.SITE_CERT_ARN }}
+      VIEWER_REQUEST_FUNCTION_ARN: ${{ vars.VIEWER_REQUEST_FUNCTION_ARN }}
 
     steps:
       - name: Checkout

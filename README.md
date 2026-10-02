@@ -123,18 +123,19 @@ build log if an image is missing on the site.
 3. **GitHub.** Under _Settings → Environments_, create `qa` and
    `production`, then add (all workflows use these names):
 
-   | Name                                            | Kind                                      | Value                                                               |
-   | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------- |
-   | `SANITY_PROJECT_ID`                             | Repository variable                       | `t88ezwbe`                                                          |
-   | `SANITY_DATASET`                                | Repository variable                       | `production`                                                        |
-   | `SANITY_STUDIO_URL`                             | Repository variable                       | `https://arcature.sanity.studio`                                    |
-   | `SANITY_STUDIO_PREVIEW_URL`                     | Repository variable                       | The QA URL                                                          |
-   | `SITE_CERT_ARN`                                 | Environment variable (`qa`, `production`) | ARN of the ACM certificate (us-east-1) for that domain              |
-   | `SITE_DOMAIN`                                   | Environment variable (`qa`, `production`) | Each stage's domain, once chosen                                    |
-   | `SANITY_API_READ_TOKEN`                         | Environment secret (`qa` only)            | The QA Viewer token; `gh secret set SANITY_API_READ_TOKEN --env qa` |
-   | `SANITY_AUTH_TOKEN`                             | Repository secret                         | The Deploy Studio token                                             |
-   | `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` | Repository secret                         | `openssl rand -hex 64`, same value as in `studio/.env`              |
-   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`    | Repository secrets                        | Already set; check the permissions in step 2                        |
+   | Name                                            | Kind                                      | Value                                                                      |
+   | ----------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------- |
+   | `SANITY_PROJECT_ID`                             | Repository variable                       | `t88ezwbe`                                                                 |
+   | `SANITY_DATASET`                                | Repository variable                       | `production`                                                               |
+   | `SANITY_STUDIO_URL`                             | Repository variable                       | `https://arcature.sanity.studio`                                           |
+   | `SANITY_STUDIO_PREVIEW_URL`                     | Repository variable                       | The QA URL                                                                 |
+   | `SITE_CERT_ARN`                                 | Environment variable (`qa`, `production`) | ARN of the ACM certificate (us-east-1) for that domain                     |
+   | `SITE_DOMAIN`                                   | Environment variable (`qa`, `production`) | Each stage's domain, once chosen                                           |
+   | `VIEWER_REQUEST_FUNCTION_ARN`                   | Environment variable (`qa`)               | Optional: ARN of an existing CloudFront Function to run on viewer requests |
+   | `SANITY_API_READ_TOKEN`                         | Environment secret (`qa` only)            | The QA Viewer token; `gh secret set SANITY_API_READ_TOKEN --env qa`        |
+   | `SANITY_AUTH_TOKEN`                             | Repository secret                         | The Deploy Studio token                                                    |
+   | `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` | Repository secret                         | `openssl rand -hex 64`, same value as in `studio/.env`                     |
+   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`    | Repository secrets                        | Already set; check the permissions in step 2                               |
 
 4. **Deploy button.** Content reaches the sites when an editor presses the
    button in the Studio's **Deploy** tool (`sanity-plugin-webhooks-trigger`).
