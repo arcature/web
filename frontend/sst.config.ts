@@ -2,7 +2,9 @@
 
 // Each stage is the Astro Node entry point in a Lambda, served through its own
 // CloudFront distribution with the Lambda's function URL as the only origin.
-// Every request, assets included, goes to the Lambda. Built by
+// Every request, assets included, goes to the Lambda. The function URL only
+// accepts requests CloudFront has signed (origin access control), so it can't
+// be called directly. Built by
 // .github/workflows/deploy.yml before `sst deploy`:
 //
 // - production (production branch): `npm run build` prerenders every page, so
@@ -24,6 +26,18 @@ export default $config({
 
   async run() {
     const isProduction = $app.stage === 'production';
+
+    // The stage's domain, with DNS managed outside AWS: SITE_DOMAIN and an ACM
+    // certificate for it in us-east-1 (SITE_CERT_ARN), both GitHub environment
+    // variables. Set here rather than in the console, which the next deploy
+    // would undo. Without them the stage uses its *.cloudfront.net address.
+    const siteDomain = process.env.SITE_DOMAIN || undefined;
+    const siteCert = process.env.SITE_CERT_ARN || undefined;
+    if (Boolean(siteDomain) !== Boolean(siteCert)) {
+      throw new Error(
+        'Set both SITE_DOMAIN and SITE_CERT_ARN for a custom domain, or neither.',
+      );
+    }
 
     // Drafts are only ever shown on QA, so only QA can read them. The token is
     // the qa GitHub environment's SANITY_API_READ_TOKEN secret, passed to
@@ -48,7 +62,18 @@ export default $config({
       copyFiles: [{ from: 'dist/client', to: 'lambda/client' }],
       nodejs: { esbuild: { external: ['sharp'] } },
       environment: { ASTRO_NODE_AUTOSTART: 'disabled', ...preview },
-      url: true,
+      // IAM auth: only signed requests get in (see the OAC below).
+      url: { authorization: 'iam' },
+    });
+
+    // CloudFront signs every request to the function URL with SigV4. POST/PUT
+    // bodies then need an x-amz-content-sha256 header from the browser;
+    // nothing on the site posts today.
+    const originAccess = new aws.cloudfront.OriginAccessControl('ServerOac', {
+      description: `Signs CloudFront requests to the ${$app.stage} function URL`,
+      originAccessControlOriginType: 'lambda',
+      signingBehavior: 'always',
+      signingProtocol: 'sigv4',
     });
 
     // Follows the Lambda's Cache-Control (nothing is cached without one), so
@@ -69,11 +94,15 @@ export default $config({
     });
 
     const cdn = new sst.aws.Cdn('Web', {
-      domain: process.env.SITE_DOMAIN || undefined,
+      domain:
+        siteDomain && siteCert
+          ? { name: siteDomain, dns: false, cert: siteCert }
+          : undefined,
       origins: [
         {
           originId: 'server',
           domainName: server.url.apply((url) => new URL(url).host),
+          originAccessControlId: originAccess.id,
           customOriginConfig: {
             httpPort: 80,
             httpsPort: 443,
@@ -103,6 +132,24 @@ export default $config({
       },
     });
 
-    return { url: cdn.url, functionUrl: server.url };
+    // Only this stage's distribution may invoke the function, and only through
+    // its URL. AWS requires both permissions for OAC with a function URL.
+    const distributionArn = cdn.nodes.distribution.arn;
+    new aws.lambda.Permission('ServerUrlFromCdn', {
+      function: server.name,
+      action: 'lambda:InvokeFunctionUrl',
+      functionUrlAuthType: 'AWS_IAM',
+      principal: 'cloudfront.amazonaws.com',
+      sourceArn: distributionArn,
+    });
+    new aws.lambda.Permission('ServerInvokeFromCdn', {
+      function: server.name,
+      action: 'lambda:InvokeFunction',
+      invokedViaFunctionUrl: true,
+      principal: 'cloudfront.amazonaws.com',
+      sourceArn: distributionArn,
+    });
+
+    return { url: cdn.url };
   },
 });

@@ -54,7 +54,14 @@ Both call the reusable `deploy.yml` (build, then `npx sst deploy` from
 `frontend/`), and both are the Astro Node entry point in a Lambda. Each stage
 has its own CloudFront distribution (`sst.aws.Cdn`, no CloudFront Functions)
 whose only origin is that Lambda's function URL, so every request, assets
-included, goes to the Lambda; CloudFront caches what the Lambda allows. Only QA
+included, goes to the Lambda; CloudFront caches what the Lambda allows. The
+function URL uses IAM auth with origin access control: CloudFront signs each
+request, and only that distribution may invoke the function, so the URL can't
+be called directly. Custom domains come from the `SITE_DOMAIN` and
+`SITE_CERT_ARN` GitHub environment variables (DNS outside AWS, `dns: false`);
+set them there, not in the CloudFront console, which the next deploy would
+undo. A POST/PUT through CloudFront must then carry an
+`x-amz-content-sha256` hash of its body; the site has no such requests yet. Only QA
 gets `SANITY_PREVIEW` and the Sanity read token. Release by
 merging `main` into `production`. Production also rebuilds on a
 `repository_dispatch` of type `sanity-publish`, sent by the Studio's **Deploy**

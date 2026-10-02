@@ -39,6 +39,7 @@ jobs:
       PUBLIC_SANITY_STUDIO_URL: ${{ vars.SANITY_STUDIO_URL }}
       SANITY_PREVIEW: ${{ inputs.preview }}
       SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
+      SITE_CERT_ARN: ${{ vars.SITE_CERT_ARN }}
 
     steps:
       - name: Checkout

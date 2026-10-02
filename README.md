@@ -106,7 +106,21 @@ build log if an image is missing on the site.
      deploy the Studio with `npm run deploy:studio`. After that, pushes to
      `main` that touch `studio/` deploy it (`deploy-studio.yml`).
    - _API → Tokens_: create a **Deploy Studio** token for GitHub Actions.
-2. **GitHub.** Under _Settings → Environments_, create `qa` and
+2. **AWS** (us-east-1).
+   - **Deploy credentials.** `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`
+     belong to an IAM user that SST deploys as. It needs to create and update
+     Lambda functions and their URL permissions, IAM roles for them, CloudFront
+     distributions, cache policies and origin access controls, and the S3
+     bucket and SSM parameters SST keeps its state in. Keys that could only
+     sync to S3 won't be enough.
+   - **Certificates.** For each stage's domain, request a public certificate in
+     _ACM_, in **us-east-1** (CloudFront only uses certificates from there), and
+     add the validation CNAME it shows at your DNS provider. Its ARN goes in
+     `SITE_CERT_ARN`.
+   - **DNS.** After the stage's first deploy with its domain, point the domain
+     at the distribution's `*.cloudfront.net` address (CNAME, or ALIAS/ANAME
+     for an apex domain). SST doesn't manage DNS (`dns: false`).
+3. **GitHub.** Under _Settings → Environments_, create `qa` and
    `production`, then add (all workflows use these names):
 
    | Name                                            | Kind                                      | Value                                                               |
@@ -115,13 +129,14 @@ build log if an image is missing on the site.
    | `SANITY_DATASET`                                | Repository variable                       | `production`                                                        |
    | `SANITY_STUDIO_URL`                             | Repository variable                       | `https://arcature.sanity.studio`                                    |
    | `SANITY_STUDIO_PREVIEW_URL`                     | Repository variable                       | The QA URL                                                          |
+   | `SITE_CERT_ARN`                                 | Environment variable (`qa`, `production`) | ARN of the ACM certificate (us-east-1) for that domain              |
    | `SITE_DOMAIN`                                   | Environment variable (`qa`, `production`) | Each stage's domain, once chosen                                    |
    | `SANITY_API_READ_TOKEN`                         | Environment secret (`qa` only)            | The QA Viewer token; `gh secret set SANITY_API_READ_TOKEN --env qa` |
    | `SANITY_AUTH_TOKEN`                             | Repository secret                         | The Deploy Studio token                                             |
    | `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` | Repository secret                         | `openssl rand -hex 64`, same value as in `studio/.env`              |
-   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`    | Repository secrets                        | Already set                                                         |
+   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`    | Repository secrets                        | Already set; check the permissions in step 2                        |
 
-3. **Deploy button.** Content reaches the sites when an editor presses the
+4. **Deploy button.** Content reaches the sites when an editor presses the
    button in the Studio's **Deploy** tool (`sanity-plugin-webhooks-trigger`).
    With `SANITY_STUDIO_PLUGIN_WEBHOOKS_ENCRYPTION_SALT` set, so the token is
    stored encrypted, add a webhook there:
