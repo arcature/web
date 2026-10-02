@@ -31,7 +31,7 @@ export default defineConfig({
 
   plugins: [
     structureTool({
-      // As clio: the pages, then everything site-wide in a Site settings folder.
+      // As in FK Kit: the pages, then everything site-wide in a Site settings folder.
       structure: (S) =>
         S.list()
           .title('Content')

@@ -7,7 +7,7 @@ import {
   type ValidationContext,
 } from 'sanity';
 
-// Ported from clio's studio/src/schemaTypes/documents/redirects.ts, without the
+// Ported from FK Kit's studio/src/schemaTypes/documents/redirects.ts, without the
 // locale rules or wildcards. frontend/src/middleware.ts answers them: in
 // production from a list built at deploy time (frontend/redirects.mjs), on QA
 // and in dev from Sanity on each request, drafts included.

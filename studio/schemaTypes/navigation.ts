@@ -3,7 +3,7 @@ import { defineField, defineType } from 'sanity';
 
 import { cta, image, linkList, text } from './fields';
 
-// Header and footer navigation, as separate singletons like clio's
+// Header and footer navigation, as separate singletons like FK Kit's
 // mainNavigation and footerNavigation.
 
 export const mainNavigation = defineType({

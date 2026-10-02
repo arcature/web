@@ -71,7 +71,7 @@ GitHub one.
   11 section object types, rendered by `frontend/src/components/Sections.astro`
   with a `switch` on `_type`. The Studio lists the home page, then a Site
   settings folder with the rest (`studio/sanity.config.ts`).
-- **SEO and social**: `siteSettings` carries clio's `seoFields` and
+- **SEO and social**: `siteSettings` carries FK Kit's `seoFields` and
   `socialFields` (`studio/schemaTypes/seo.ts`; `noIndex` is the pre-launch
   "Hide from search engines" switch and also drives `robots.txt`) plus
   `socialProfiles` (platform + username). `frontend/src/lib/social.ts` turns
@@ -106,7 +106,7 @@ GitHub one.
   `accent`, `imageSide`, `platform` and `username`; add any new key of that kind
   there.
 - **Navigation and 404**: `mainNavigation`, `footerNavigation` and
-  `notFoundPage` are singletons (as in clio), fetched with `siteSettings` by
+  `notFoundPage` are singletons (as in FK Kit), fetched with `siteSettings` by
   `siteQuery`. `notFoundPage` has a title and the same sections as `homePage`,
   both rendered by `Sections.astro`, whose first hero (or else first call to
   action) gets the page's `<h1>`.

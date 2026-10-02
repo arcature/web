@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, type FieldDefinition } from 'sanity';
 
-// SEO and social fields, as in clio's studio/src/schemaTypes/shared/. Spread
+// SEO and social fields, as in FK Kit's studio/src/schemaTypes/shared/. Spread
 // them into a document that defines `seo` and `social` groups.
 
 type NoIndexOptions = Partial<
@@ -69,7 +69,7 @@ export const socialFields = () => [
   }),
 ];
 
-// Platforms as in clio's footerNavigation. The frontend builds each profile URL
+// Platforms as in FK Kit's footerNavigation. The frontend builds each profile URL
 // from the username (frontend/src/lib/social.ts), so keep the values in step.
 const platforms = [
   { title: 'Facebook', value: 'facebook' },

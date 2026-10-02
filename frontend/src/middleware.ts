@@ -22,7 +22,7 @@ import { canReadDrafts, client, draftClient } from './lib/sanity';
  * Prerendered pages are files, so in production this only sees paths without
  * one, which is where a redirect source lives ([...path].astro).
  *
- * As clio's: matching ignores case and a trailing slash, and the request's
+ * As in FK Kit: matching ignores case and a trailing slash, and the request's
  * query string carries over unless the destination sets the same parameter.
  */
 

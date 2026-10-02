@@ -54,7 +54,7 @@ export async function imageUrl(
   return optimized.src;
 }
 
-// Open Graph image size, as in clio (frontend/src/lib/image.ts).
+// Open Graph image size, as in FK Kit (frontend/src/lib/image.ts).
 const SOCIAL_IMAGE = { width: 1200, height: 628 };
 
 /**
