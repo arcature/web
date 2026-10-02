@@ -7,12 +7,8 @@
 import Sections from '../components/Sections.astro';
 import Layout from '../layouts/Layout.astro';
 import { getNotFound, getSite } from '../lib/content';
-import { isDraftMode } from '../lib/sanity';
 
-const [site, notFound] = await Promise.all([
-  getSite(Astro),
-  getNotFound(Astro),
-]);
+const [site, notFound] = await Promise.all([getSite(), getNotFound()]);
 const { sections } = notFound;
 const endsWithCta = sections.at(-1)?._type === 'cta';
 ---
@@ -22,7 +18,6 @@ const endsWithCta = sections.at(-1)?._type === 'cta';
   title={notFound.title ?? 'Page not found'}
   noIndex
   footerOverlap={endsWithCta}
-  draftMode={isDraftMode(Astro)}
 >
   <Sections sections={sections} />
 </Layout>

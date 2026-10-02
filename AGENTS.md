@@ -102,19 +102,27 @@ fails without it). Production never gets it.
   that file; run `npm run typegen` after changing the schema or a query.
   Queries `coalesce` lists to `[]` and components tolerate null fields, because
   drafts can be half-filled.
-- **Data access**: `frontend/src/lib/content.ts` (`getSite`, `getHome`) picks the
-  published client or the draft client per request (`frontend/src/lib/sanity.ts`).
+- **Data access**: `frontend/src/lib/content.ts` (`getSite`, `getHome`,
+  `getNotFound`) uses the draft client when `showDrafts` is true (QA and local
+  dev, given `SANITY_API_READ_TOKEN`), else the published client
+  (`frontend/src/lib/sanity.ts`).
 - **Rendering modes**: one codebase, two builds. `SANITY_PREVIEW=true` makes an
   inline integration in `frontend/astro.config.mjs` turn off prerendering for
-  every route and inject `/api/draft-mode/enable` and `/disable`
-  (`frontend/src/preview/`). Without it, everything is prerendered.
-- **Draft mode**: Presentation calls `/api/draft-mode/enable` with a signed
-  secret; the route sets an HMAC cookie derived from `SANITY_API_READ_TOKEN`.
-  Only then are drafts fetched, with stega encoding for click-to-edit. Local
-  `npm run dev` always fetches drafts when the token is set (`clientFor` in
-  `content.ts`), without draft mode.
-  `VisualEditing.astro` is imported only in preview builds, so its CSS never
-  reaches production.
+  every route. Without it, everything is prerendered.
+- **Drafts and Presentation**: there's no draft mode. QA builds always fetch
+  drafts with stega and always include `VisualEditing.astro`
+  (`enableVisualEditing`, which does nothing outside Presentation), and are
+  always `noindex` with a disallowing `robots.txt`. The overlay reloads the
+  page on edits and syncs Presentation's address bar (history adapter).
+- **Routes**: `shared/routes.ts` (a plain folder, imported by the Studio and the
+  frontend) holds the one copy of where content lives: `fixedPages` (singleton
+  pages pinned by ID) and `slugRoutes` (types with a page per slug).
+  `studio/presentation/resolve.ts` generates Presentation's `mainDocuments`
+  (URL → document) and `locations` (document → its page and the pages that
+  reference it) from it. **To add a page**, add it there and add its Astro
+  route; the Studio needs nothing else. Tests: `frontend/src/lib/routes.test.ts`. `VisualEditing.astro` is imported only in preview builds, so
+  its CSS never reaches production. QA shows unpublished drafts to anyone who
+  can reach it.
 - **Stega**: values used as classes, conditions or URLs must not carry stega
   characters. The filter in `frontend/src/lib/sanity.ts` excludes `href`,
   `accent`, `imageSide`, `platform` and `username`; add any new key of that kind
@@ -125,7 +133,7 @@ fails without it). Production never gets it.
   both rendered by `Sections.astro`, whose first hero (or else first call to
   action) gets the page's `<h1>`.
 - **Redirects**: `redirect` documents (exact paths only), answered with a
-  301/302 by `src/middleware.ts`, in draft mode too. Production matches against
+  301/302 by `src/middleware.ts`. Production matches against
   `src/generated/redirects.json` (gitignored), which the `sanity-redirects`
   integration (`frontend/redirects.mjs`) builds from published content; QA and
   dev query Sanity on each request with the draft client (stega off). The
@@ -208,8 +216,10 @@ fails without it). Production never gets it.
 | `frontend/src/middleware.ts`         | Redirects: built list in production, live on QA and dev |
 | `frontend/redirects.mjs`             | Builds production's redirect list from Sanity           |
 | `frontend/src/lib/queries.ts`        | GROQ queries                                            |
-| `frontend/src/lib/sanity.ts`         | Sanity clients, stega filter, draft-mode cookie         |
+| `frontend/src/lib/sanity.ts`         | Sanity clients, stega filter, `showDrafts`              |
 | `frontend/src/lib/images.ts`         | Build-time vs CDN image URLs                            |
+| `shared/routes.ts`                   | Route rules: fixed pages, slugged types, `documentPath` |
+| `studio/presentation/resolve.ts`     | Presentation's URL ↔ document mapping, from the routes  |
 | `studio/sanity.config.ts`            | Studio: singletons, Presentation, Deploy tool, Vision   |
 | `studio/sanity.cli.ts`               | Studio host, deployment ID, TypeGen paths               |
 | `.github/workflows/deploy.yml`       | Reusable build + SST deploy                             |

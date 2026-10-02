@@ -5,6 +5,7 @@ import { presentationTool } from 'sanity/presentation';
 import { type StructureBuilder, structureTool } from 'sanity/structure';
 import { webhooksTrigger } from 'sanity-plugin-webhooks-trigger';
 
+import { resolve } from './presentation/resolve';
 import { schemaTypes, singletonTypes } from './schemaTypes';
 
 // Encrypts the auth tokens the Deploy tool stores with each webhook. Changing
@@ -17,11 +18,6 @@ const singleton = (S: StructureBuilder, type: string) =>
   S.documentTypeListItem(type).child(
     S.document().schemaType(type).documentId(type),
   );
-
-const homeLocation = { title: 'Home page', href: '/' };
-const notFoundLocation = { title: '404 page', href: '/404' };
-// Settings and navigation appear on every page.
-const everyPage = { locations: [homeLocation, notFoundLocation] };
 
 export default defineConfig({
   name: 'default',
@@ -55,23 +51,15 @@ export default defineConfig({
           ]),
     }),
     presentationTool({
+      // QA always shows drafts, so Presentation just loads it; there's no
+      // draft mode to switch on.
       previewUrl: {
         origin:
           process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:4321',
-        previewMode: {
-          enable: '/api/draft-mode/enable',
-          disable: '/api/draft-mode/disable',
-        },
       },
-      resolve: {
-        locations: {
-          homePage: { locations: [homeLocation] },
-          notFoundPage: { locations: [notFoundLocation] },
-          siteSettings: everyPage,
-          mainNavigation: everyPage,
-          footerNavigation: everyPage,
-        },
-      },
+      // Generated from shared/routes.ts: which document a URL shows, and
+      // where each document is used.
+      resolve,
     }),
     webhooksTrigger({
       title: 'Deploy',

@@ -20,11 +20,9 @@ interface Props {
   image?: string;
   imageAlt?: string;
   ogType?: string;
-  /** Showing drafts inside Sanity's Presentation tool; never indexed. */
-  draftMode?: boolean;
 }
 
-// In draft mode values carry stega characters for click-to-edit. Nothing in
+// On QA and in dev values carry stega characters for click-to-edit. Nothing in
 // <head> is clickable, so strip them, and do it before the fallbacks below: an
 // encoded empty string isn't empty and would win a fallback it should lose.
 const {
@@ -36,7 +34,6 @@ const {
   image: pageImage,
   imageAlt: pageImageAlt,
   ogType = 'website',
-  draftMode = false,
 } = stegaClean(Astro.props);
 const site = stegaClean(rawSite);
 
@@ -49,7 +46,10 @@ const title = pageTitle
   : site.seoTitle || siteTitle || '';
 const description = pageDescription || site.seoDescription || undefined;
 const keywords = pageKeywords?.length ? pageKeywords : site.seoKeywords;
-const noIndex = draftMode || (pageNoIndex ?? site.noIndex ?? false);
+// QA shows drafts, so it's never indexed.
+const noIndex =
+  Boolean(import.meta.env.SANITY_PREVIEW) ||
+  (pageNoIndex ?? site.noIndex ?? false);
 
 const socialTitle = pageTitle
   ? withSiteTitle(pageTitle)

@@ -15,7 +15,7 @@ const isPreview = process.env.SANITY_PREVIEW === 'true';
 export const handler = serverless(
   (req, res) => {
     if (isPreview) {
-      // Drafts depend on a cookie, so nothing on QA may be cached or indexed.
+      // QA shows drafts as they change, so nothing there is cached or indexed.
       res.setHeader('Cache-Control', 'private, no-store');
       res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     }

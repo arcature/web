@@ -1,14 +1,45 @@
 ---
 /**
- * Click-to-edit overlays for Sanity's Presentation tool. Only rendered in
- * draft mode, which only exists on the QA stage.
+ * Click-to-edit overlays for Sanity's Presentation tool. Included in QA builds
+ * only; outside Presentation it does nothing.
  */
 ---
 
 <script>
   import { enableVisualEditing } from '@sanity/visual-editing';
 
+  const here = () =>
+    `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
   enableVisualEditing({
+    // Every navigation here is a full page load, so tell Presentation where
+    // this page is once it loads, and load whatever it navigates to.
+    history: {
+      subscribe: (navigate) => {
+        // A reload (after an edit) mustn't add another back-button entry.
+        const [entry] = performance.getEntriesByType(
+          'navigation',
+        ) as PerformanceNavigationTiming[];
+        navigate({
+          type: entry?.type === 'reload' ? 'replace' : 'push',
+          url: here(),
+          title: document.title,
+        });
+
+        return () => {};
+      },
+      update: (update) => {
+        if (update.type === 'pop') {
+          window.history.back();
+        } else if (update.url !== here()) {
+          if (update.type === 'replace') {
+            window.location.replace(update.url);
+          } else {
+            window.location.assign(update.url);
+          }
+        }
+      },
+    },
     // Pages are rendered on the server, so show edits by reloading.
     refresh: (payload) => {
       if (payload.source === 'manual' || payload.source === 'mutation') {

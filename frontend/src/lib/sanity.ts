@@ -1,7 +1,4 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
-
 import { createClient } from '@sanity/client';
-import type { AstroCookies } from 'astro';
 import {
   PUBLIC_SANITY_DATASET,
   PUBLIC_SANITY_PROJECT_ID,
@@ -46,38 +43,10 @@ export const draftClient = () =>
     },
   });
 
-// Draft mode is a cookie set by /api/draft-mode/enable once Presentation's
-// preview secret checks out. Its value is derived from the read token, so it
-// can't be forged and stops working when the token is rotated.
-export const DRAFT_MODE_COOKIE = 'sanity-draft-mode';
-
-export function draftModeCookieValue(): string | undefined {
-  return SANITY_API_READ_TOKEN
-    ? createHmac('sha256', SANITY_API_READ_TOKEN)
-        .update(DRAFT_MODE_COOKIE)
-        .digest('hex')
-    : undefined;
-}
-
-export interface RequestContext {
-  cookies: AstroCookies;
-  isPrerendered: boolean;
-}
-
-export function isDraftMode({
-  cookies,
-  isPrerendered,
-}: RequestContext): boolean {
-  if (isPrerendered) {
-    return false;
-  }
-
-  const expected = draftModeCookieValue();
-  const actual = cookies.get(DRAFT_MODE_COOKIE)?.value;
-
-  if (!expected || !actual || actual.length !== expected.length) {
-    return false;
-  }
-
-  return timingSafeEqual(Buffer.from(actual), Buffer.from(expected));
-}
+/**
+ * Whether this build shows drafts: QA (SANITY_PREVIEW builds) always does, as
+ * does local dev, given a token to read them with. Production never does.
+ */
+export const showDrafts =
+  (import.meta.env.DEV || Boolean(import.meta.env.SANITY_PREVIEW)) &&
+  canReadDrafts;

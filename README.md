@@ -87,10 +87,10 @@ Headings are rendered in title case by CSS, so type them in sentence case.
 
 To release, merge `main` into `production`.
 
-QA also serves as the draft preview for Presentation. It shows published content
-unless it's opened from Presentation, which
-calls `/api/draft-mode/enable` with a short-lived secret. That sets a cookie that
-switches the request to drafts, with click-to-edit overlays.
+QA also serves as the preview for Presentation: it always shows draft content,
+with click-to-edit overlays when it's opened in Presentation. Anyone who can
+reach the QA URL sees unpublished drafts, so keep it private if that matters
+(for example with a CloudFront Function, `VIEWER_REQUEST_FUNCTION_ARN`).
 
 If a Sanity image can't be downloaded during a production build, Astro logs a
 warning ("Unable to generate optimized image") but still finishes. Check the
@@ -99,8 +99,6 @@ build log if an image is missing on the site.
 ### One-time setup
 
 1. **Sanity** (project `t88ezwbe`, dataset `production`). In _sanity.io/manage_:
-   - _API → CORS origins_: add `http://localhost:4321` and the QA URL, with
-     credentials allowed.
    - _API → Tokens_: create a **Viewer** token for the QA stage.
    - Set `SANITY_STUDIO_PREVIEW_URL` in `studio/.env` to the QA URL, then
      deploy the Studio with `npm run deploy:studio`. After that, pushes to

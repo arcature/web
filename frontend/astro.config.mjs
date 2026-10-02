@@ -7,8 +7,8 @@ import { loadEnv } from 'vite';
 import { sanityRedirects } from './redirects.mjs';
 
 // Production prerenders every page (published content, images downloaded into
-// the build). The QA stage renders every page on request so Sanity's
-// Presentation tool can show drafts, and adds the draft-mode routes.
+// the build). The QA stage renders every page on request, always with draft
+// content, so Sanity's Presentation tool shows edits as they're made.
 const isPreview = process.env.SANITY_PREVIEW === 'true';
 
 // The config doesn't see .env on its own; CI sets these in the environment.
@@ -20,18 +20,6 @@ const sanityPreview = () => ({
   hooks: {
     'astro:route:setup': ({ route }) => {
       route.prerender = false;
-    },
-    'astro:config:setup': ({ injectRoute }) => {
-      injectRoute({
-        pattern: '/api/draft-mode/enable',
-        entrypoint: './src/preview/draft-mode-enable.ts',
-        prerender: false,
-      });
-      injectRoute({
-        pattern: '/api/draft-mode/disable',
-        entrypoint: './src/preview/draft-mode-disable.ts',
-        prerender: false,
-      });
     },
   },
 });

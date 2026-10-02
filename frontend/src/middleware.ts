@@ -12,7 +12,7 @@ import {
 import { canReadDrafts, client, draftClient } from './lib/sanity';
 
 /**
- * Answers the redirects kept in Sanity, including in draft mode.
+ * Answers the redirects kept in Sanity.
  *
  * - Production uses the list the sanity-redirects integration (redirects.mjs)
  *   built from published content, so requests never wait on Sanity.

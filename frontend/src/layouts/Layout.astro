@@ -13,11 +13,9 @@ interface Props {
   /** Keep this page out of search engines whatever Site settings say. */
   noIndex?: boolean;
   footerOverlap?: boolean;
-  /** Showing drafts inside Sanity's Presentation tool. */
-  draftMode?: boolean;
 }
 
-const { site, title, noIndex, footerOverlap, draftMode = false } = Astro.props;
+const { site, title, noIndex, footerOverlap } = Astro.props;
 
 // Only preview builds include the overlay; otherwise its CSS would be linked from every page.
 const VisualEditing = import.meta.env.SANITY_PREVIEW
@@ -31,7 +29,7 @@ const VisualEditing = import.meta.env.SANITY_PREVIEW
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <Seo site={site} title={title} noIndex={noIndex} draftMode={draftMode} />
+    <Seo site={site} title={title} noIndex={noIndex} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
@@ -47,6 +45,6 @@ const VisualEditing = import.meta.env.SANITY_PREVIEW
       <slot />
     </main>
     <Footer site={site} overlapPrevious={footerOverlap} />
-    {draftMode && VisualEditing && <VisualEditing />}
+    {VisualEditing && <VisualEditing />}
   </body>
 </html>
