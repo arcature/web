@@ -95,3 +95,50 @@ export function compileRedirects(rules: Rule[]): {
 /** Rules by match key, for lookups. */
 export const redirectTable = (redirects: Redirect[]) =>
   new Map(redirects.map((rule) => [matchKey(rule.source), rule] as const));
+
+function decode(pathname: string): string {
+  try {
+    return decodeURIComponent(pathname);
+  } catch {
+    return pathname;
+  }
+}
+
+/** The rule for a request path, if any. */
+export const findRedirect = (
+  table: Map<string, Redirect>,
+  pathname: string,
+): Redirect | undefined => table.get(matchKey(decode(pathname)));
+
+/**
+ * The redirect response for a matched rule. The request's query string carries
+ * over unless the destination sets the same parameter, and a same-site
+ * destination stays relative so it follows the visitor's host. `cacheable`
+ * lets CloudFront hold a 301 for an hour (production only).
+ */
+export function redirectResponse(
+  rule: Redirect,
+  url: URL,
+  cacheable: boolean,
+): Response {
+  const target = new URL(rule.destination, url);
+  for (const [name, value] of url.searchParams) {
+    if (!target.searchParams.has(name)) {
+      target.searchParams.append(name, value);
+    }
+  }
+
+  const location =
+    target.origin === url.origin
+      ? `${target.pathname}${target.search}${target.hash}`
+      : target.toString();
+
+  return new Response(null, {
+    status: rule.status,
+    headers: {
+      Location: location,
+      'Cache-Control':
+        rule.status === 301 && cacheable ? 'public, max-age=3600' : 'no-store',
+    },
+  });
+}

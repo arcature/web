@@ -19,6 +19,7 @@
     "lint:fix": "npm run lint:fix --workspaces",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "test": "npm run test -w frontend",
     "deploy:studio": "npm run deploy -w studio",
     "typegen": "npm run typegen -w studio"
   },

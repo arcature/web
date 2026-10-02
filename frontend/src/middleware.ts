@@ -3,8 +3,9 @@ import { defineMiddleware } from 'astro:middleware';
 import generated from './generated/redirects.json';
 import {
   compileRedirects,
-  matchKey,
+  findRedirect,
   type Redirect,
+  redirectResponse,
   redirectsQuery,
   redirectTable,
 } from './lib/redirects';
@@ -47,14 +48,6 @@ async function currentTable() {
   return redirectTable(redirects);
 }
 
-function decode(pathname: string): string {
-  try {
-    return decodeURIComponent(pathname);
-  } catch {
-    return pathname;
-  }
-}
-
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url } = context;
 
@@ -76,33 +69,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  const rule = table.get(matchKey(decode(url.pathname)));
+  const rule = findRedirect(table, url.pathname);
 
-  if (!rule) {
-    return next();
-  }
-
-  const target = new URL(rule.destination, url);
-  for (const [name, value] of url.searchParams) {
-    if (!target.searchParams.has(name)) {
-      target.searchParams.append(name, value);
-    }
-  }
-
-  // Same-site destinations stay relative, so they follow the visitor's host.
-  const location =
-    target.origin === url.origin
-      ? `${target.pathname}${target.search}${target.hash}`
-      : target.toString();
-
-  return new Response(null, {
-    status: rule.status,
-    headers: {
-      Location: location,
-      // CloudFront may hold a permanent redirect for an hour in production.
-      // QA and dev never cache, since their redirects can change at any time.
-      'Cache-Control':
-        rule.status === 301 && !live ? 'public, max-age=3600' : 'no-store',
-    },
-  });
+  // QA and dev never cache: their redirects can change at any time.
+  return rule ? redirectResponse(rule, url, !live) : next();
 });

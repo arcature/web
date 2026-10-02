@@ -30,6 +30,7 @@ npm run build         # build the frontend (production mode unless SANITY_PREVIE
 npm run check         # astro check (frontend) + tsc --noEmit (studio)
 npm run lint          # ESLint in both workspaces
 npm run format:check  # Prettier
+npm test              # Vitest (frontend unit tests)
 npm run typegen       # regenerate frontend/src/sanity.types.ts from the schema + queries
 npm run deploy:studio # deploy the Studio
 ```
@@ -37,11 +38,10 @@ npm run deploy:studio # deploy the Studio
 ## Before opening a PR
 
 ```bash
-npm run lint && npm run format:check && npm run check && npm run build
+npm run lint && npm run format:check && npm run check && npm test && npm run build
 ```
 
-`.github/workflows/pr-checks.yml` runs the same, plus `npm test`, which has no
-script yet and fails.
+`.github/workflows/pr-checks.yml` runs the same.
 
 ## Branches and deploys
 
@@ -142,6 +142,17 @@ GitHub one.
 - Sanity project `t88ezwbe`, dataset `production`.
 - `.env.github-vars` / `.env.github-secrets` (gitignored) hold the values for
   `gh variable set -f` / `gh secret set -f`.
+
+## Testing
+
+- **Vitest** for unit tests of the plain TypeScript in `frontend/src/lib`
+  (`*.test.ts` beside the module), with its own `frontend/vitest.config.ts`
+  rather than Astro's `getViteConfig`, so tests never load `astro.config.mjs`
+  (which fetches redirects from Sanity).
+- Logic that would otherwise sit in an Astro file or the middleware goes in
+  `src/lib` so it can be tested: `redirects.ts` holds validation, matching and
+  the redirect response; `src/middleware.ts` only decides where the rules come
+  from. Rendering is covered by `npm run check` and `npm run build`.
 
 ## Code conventions
 
